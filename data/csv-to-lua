@@ -1,0 +1,80 @@
+#! /usr/bin/env lua
+
+-- Copyright (C) 2019 Tomoyuki Fujimori <moyu@dromozoa.com>
+--
+-- This file is part of dromozoa-serializer.
+--
+-- dromozoa-serializer is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- dromozoa-serializer is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
+
+local data = io.read "*a"
+
+local i = 1
+local n = #data
+
+local state = "field"
+
+local result = {}
+local record = {}
+
+while #data > 0 do
+  local a = data:match [[^"(.*)]]
+  if a then
+    data = a
+    local field = ""
+    while #data > 0 do
+      local a, b = data:match [[^([^"]*")"(.*)]]
+      if a then
+        field = field .. a
+        data = b
+      else
+        break
+      end
+    end
+    assert(#data > 0)
+    local a, b = data:match [[^([^"]*)"(.*)]]
+    assert(a)
+    field = field .. a
+    data = b
+    record[#record + 1] = field
+  else
+    local a, b = data:match "^([^\r,]*)(.*)"
+    assert(a)
+    local field = a
+    data = b
+    record[#record + 1] = field
+  end
+
+  local a = data:match "^,(.*)"
+  if a then
+    data = a
+  else
+    local a = data:match "^\r\n(.*)"
+    if a then
+      data = a
+      result[#result + 1] = record
+      record = {}
+    else
+      assert(data == "")
+      result[#result + 1] = record
+      record = nil
+    end
+  end
+end
+
+for i = 1, #result do
+  local record = result[i]
+  for j = 1, #record do
+    print(i, j, ("%q"):format(record[j]))
+  end
+end
