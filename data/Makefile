@@ -23,13 +23,19 @@ postcode_url = https://dromozoa.s3.amazonaws.com/mirror/zipcode-2019-06-28/KEN_A
 postcode_source = KEN_ALL.CSV
 postcode_result = postcode.lua
 
-fetch: $(unicode_source) $(postcode_source)
+build: $(unicode_result) $(postcode_result)
+
+clean:
+	rm -f $(unicode_source) $(unicode_result) $(postcode_source) $(postcode_result)
 
 $(unicode_source):
 	curl -O $(unicode_url)
 
+$(unicode_result): $(unicode_source)
+	lua build_unicode.lua <$(unicode_source) >$(unicode_result)
+
 $(postcode_source):
 	curl -O $(postcode_url)
 
-clean:
-	rm -f $(unicode_source) $(postcode_source)
+$(postcode_result): $(postcode_source)
+	iconv -f CP932 $(postcode_source) | lua build_postcode.lua >$(postcode_result)
