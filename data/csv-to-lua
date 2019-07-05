@@ -22,8 +22,6 @@ local data = io.read "*a"
 local i = 1
 local n = #data
 
-local state = "field"
-
 local result = {}
 local record = {}
 
@@ -72,9 +70,13 @@ while #data > 0 do
   end
 end
 
+io.write "return {\n"
 for i = 1, #result do
   local record = result[i]
+  io.write "{"
   for j = 1, #record do
-    print(i, j, ("%q"):format(record[j]))
+    io.write(("%q;"):format(record[j]))
   end
+  io.write "};\n"
 end
+io.write "}\n"
