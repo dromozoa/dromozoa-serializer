@@ -15,5 +15,25 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
+local dataset = {}
+
 for line in io.lines() do
+  local data = {}
+  local i = 0
+  for item in line:gmatch "[^;]*" do
+    data[#data + 1] = item
+  end
+  assert(#data == 15)
+  dataset[#dataset + 1] = data
 end
+
+io.write "return {\n"
+for i = 1, #dataset do
+  io.write "{"
+  local data = dataset[i]
+  for j = 1, #data do
+    io.write(("%q;"):format(data[j]))
+  end
+  io.write "};\n"
+end
+io.write "}\n"

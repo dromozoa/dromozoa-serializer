@@ -15,5 +15,29 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
+local dataset = {}
+
 for line in io.lines() do
+  local data = { assert(line:match([[^(%d+),"(%d+) *","(%d+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)","([^"]+)",(%d),(%d),(%d),(%d),(%d),(%d)]] .. "\r$")) }
+  for i = 10, 15 do
+    data[i] = assert(tonumber(data[i]))
+  end
+  assert(#data == 15)
+  dataset[#dataset + 1] = data
 end
+
+io.write "return {\n"
+for i = 1, #dataset do
+  io.write "{"
+  local data = dataset[i]
+  for j = 1, #data do
+    local item = data[j]
+    if type(item) == "number" then
+      io.write(("%.17g;"):format(item))
+    else
+      io.write(("%q;"):format(item))
+    end
+  end
+  io.write "};\n"
+end
+io.write "}\n"
