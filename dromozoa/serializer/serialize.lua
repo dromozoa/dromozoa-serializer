@@ -19,10 +19,6 @@ local pairs = pairs
 local type = type
 local math_type = math.type
 
-if not math_type then
-  math_type = function () end
-end
-
 local function write(handle, v, map, n)
   local t = type(v)
   if t == "boolean" then
@@ -32,7 +28,7 @@ local function write(handle, v, map, n)
       handle:write "2\n"
     end
   elseif t == "number" then
-    if math_type(v) == "integer" then
+    if math_type and math_type(v) == "integer" then
       handle:write("3 ", v, "\n")
     elseif v % 1 == 0 then
       handle:write("4 ", v, "\n")
@@ -60,6 +56,6 @@ local function write(handle, v, map, n)
 end
 
 return function (handle, root)
-  handle:write "1\n" -- version
+  handle:write "1\n"
   write(handle, root, {}, 0)
 end

@@ -24,8 +24,7 @@ local function read(handle, op, map)
     return handle:read "*n"
   elseif op == 5 then
     local n = handle:read("*n", 1)
-    local result = handle:read(n)
-    return result
+    return handle:read(n)
   elseif op == 6 then
     local n = handle:read "*n"
     return map[n]
