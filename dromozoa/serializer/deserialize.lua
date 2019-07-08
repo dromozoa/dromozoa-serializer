@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local function deserialize_value(handle, op, map)
+local function read(handle, op, map)
   if op == 1 then
     return true
   elseif op == 2 then
@@ -39,9 +39,9 @@ local function deserialize_value(handle, op, map)
       if op == 8 then
         break
       end
-      local k = deserialize_value(handle, op, map)
+      local k = read(handle, op, map)
       local op = handle:read "*n"
-      local v = deserialize_value(handle, op, map)
+      local v = read(handle, op, map)
       result[k] = v
     end
 
@@ -51,18 +51,10 @@ local function deserialize_value(handle, op, map)
   end
 end
 
-local function deserialize(handle)
-  local map = {}
-
-  local op = handle:read "*n"
-  local result = deserialize_value(handle, op, map)
-
-  return result
-end
-
 return function (handle)
   local version = handle:read "*n"
   if version == 1 then
-    return deserialize(handle)
+    local op = handle:read "*n"
+    return read(handle, op, {})
   end
 end
