@@ -15,6 +15,26 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-return {
-  serialize = require "dromozoa.serializer.serialize";
-}
+local serializer = require "dromozoa.serializer"
+
+io.write(("="):rep(60), "\n")
+serializer.serialize(io.stdout, 3.14)
+io.write(("="):rep(60), "\n")
+serializer.serialize(io.stdout, 42)
+io.write(("="):rep(60), "\n")
+serializer.serialize(io.stdout, true)
+io.write(("="):rep(60), "\n")
+serializer.serialize(io.stdout, "foo")
+io.write(("="):rep(60), "\n")
+serializer.serialize(io.stdout, {
+  foo = 42;
+  bar = "baz";
+})
+
+io.write(("="):rep(60), "\n")
+local x = { name = "x"; }
+local y = { name = "y";  to = x }
+local z = { name = "z";  to = y }
+x.to = z
+serializer.serialize(io.stdout, x)
+

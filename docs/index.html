@@ -46,6 +46,101 @@
   <li>正規表現から生成したDFA</li>
 </ul>
 
+<h2>コード</h2>
+
+<table>
+  <tr>
+    <th>major</th>
+    <th>type</th>
+    <th>minor</th>
+    <th>name</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td><code>LUA_TNIL</code></td>
+    <td>N/A</td>
+    <td><code>nil</code></td>
+  </tr>
+  <tr>
+    <td rowspan="2">1</td>
+    <td rowspan="2"><code>LUA_TBOOLEAN</code></td>
+    <td>0</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td rowspan="2">3</td>
+    <td rowspan="2"><code>LUA_TNUMBER</code></td>
+    <td>0</td>
+    <td><code>LUA_TNUMFLT</code> (double)</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><code>LUA_TNUMINT</code> (int64_t)</td>
+  </tr>
+  <tr>
+    <td rowspan="2">4</td>
+    <td rowspan="2"><code>LUA_TSTRING</code></td>
+    <td>0</td>
+    <td><code>LUA_TSHRSTR</code></td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><code>LUA_TLNGSTR</code></td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><code>LUA_TTABLE</code></td>
+    <td>N/A</td>
+    <td><code>{}</code></td>
+  </tr>
+</table>
+
+<h3>Lua 5.4ヘッダ</h3>
+
+<pre class="prettyprint lang-c">
+/* Variant tags for numbers */
+#define LUA_TNUMFLT	(LUA_TNUMBER | (1 &lt;&lt; 4))  /* float numbers */
+#define LUA_TNUMINT	(LUA_TNUMBER | (2 &lt;&lt; 4))  /* integer numbers */
+</pre>
+
+<pre class="prettyprint lang-c">
+/* Variant tags for strings */
+#define LUA_TSHRSTR	(LUA_TSTRING | (1 &lt;&lt; 4))  /* short strings */
+#define LUA_TLNGSTR	(LUA_TSTRING | (2 &lt;&lt; 4))  /* long strings */
+</pre>
+
+<h3>Lua 5.3ヘッダ</h3>
+
+<pre class="prettyprint lang-c">
+/* Variant tags for numbers */
+#define LUA_TNUMFLT	(LUA_TNUMBER | (0 &lt;&lt; 4))  /* float numbers */
+#define LUA_TNUMINT	(LUA_TNUMBER | (1 &lt;&lt; 4))  /* integer numbers */
+</pre>
+
+<pre class="prettyprint lang-c">
+/* Variant tags for strings */
+#define LUA_TSHRSTR	(LUA_TSTRING | (0 &lt;&lt; 4))  /* short strings */
+#define LUA_TLNGSTR	(LUA_TSTRING | (1 &lt;&lt; 4))  /* long strings */
+</pre>
+
+<h3>命令セット</h3>
+
+<pre>
+1 FALSE
+2 TRUE
+3 NUMBER  data
+4 INTEGER data
+5 STRING  n:data
+6 NEW     r
+7 REF     r
+8 BEGIN   r
+</pre>
+
 </div>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </body>
 </html>
