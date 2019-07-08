@@ -19,40 +19,40 @@ local pairs = pairs
 local type = type
 local math_type = math.type
 
-local function write(handle, v, map, n)
-  local t = type(v)
+local function write(handle, u, map, max)
+  local t = type(u)
   if t == "boolean" then
-    if v then
+    if u then
       handle:write "1\n"
     else
       handle:write "2\n"
     end
   elseif t == "number" then
-    if math_type and math_type(v) == "integer" then
-      handle:write("3 ", v, "\n")
-    elseif v % 1 == 0 then
-      handle:write("4 ", v, "\n")
+    if math_type and math_type(u) == "integer" then
+      handle:write("3 ", u, "\n")
+    elseif u % 1 == 0 then
+      handle:write("4 ", u, "\n")
     else
-      handle:write("4 ", ("%.17g"):format(v), "\n")
+      handle:write("4 ", ("%.17g"):format(u), "\n")
     end
   elseif t == "string" then
-    handle:write("5 ", #v, ":", v, "\n")
+    handle:write("5 ", #u, ":", u, "\n")
   elseif t == "table" then
-    local m = map[v]
-    if m then
-      handle:write("6 ", m, "\n")
+    local ref = map[u]
+    if ref then
+      handle:write("6 ", ref, "\n")
     else
-      n = n + 1
-      handle:write("7 ", n, "\n")
-      map[v] = n
-      for k, v in pairs(v) do
-        n = write(handle, k, map, n)
-        n = write(handle, v, map, n)
+      max = max + 1
+      handle:write("7 ", max, "\n")
+      map[u] = max
+      for k, v in pairs(u) do
+        max = write(handle, k, map, max)
+        max = write(handle, v, map, max)
       end
       handle:write("8\n")
     end
   end
-  return n
+  return max
 end
 
 return function (handle, root)
