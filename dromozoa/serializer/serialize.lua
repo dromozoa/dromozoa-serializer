@@ -19,6 +19,10 @@ local pairs = pairs
 local type = type
 local math_type = math.type
 
+if not math_type then
+  math_type = function () end
+end
+
 local function serialize_value(handle, v, map, n)
   local t = type(v)
   if t == "boolean" then

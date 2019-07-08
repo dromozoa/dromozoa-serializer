@@ -31,11 +31,11 @@ clean:
 $(unicode_source):
 	curl -O $(unicode_url)
 
-$(unicode_result): $(unicode_source)
+$(unicode_result): $(unicode_source) build_unicode.lua
 	lua build_unicode.lua <$(unicode_source) >$(unicode_result)
 
 $(postcode_source):
 	curl -O $(postcode_url)
 
-$(postcode_result): $(postcode_source)
+$(postcode_result): $(postcode_source) build_postcode.lua
 	iconv -f CP932 $(postcode_source) | lua build_postcode.lua >$(postcode_result)

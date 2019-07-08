@@ -26,18 +26,32 @@ for line in io.lines() do
   dataset[#dataset + 1] = data
 end
 
-io.write "return {\n"
-for i = 1, #dataset do
-  io.write "{"
-  local data = dataset[i]
-  for j = 1, #data do
-    local item = data[j]
-    if type(item) == "number" then
-      io.write(("%.17g;"):format(item))
-    else
-      io.write(("%q;"):format(item))
+local n = #dataset
+local m = 65536
+io.stderr:write("#", n, "\n")
+
+io.write "local _ = {}\n"
+io.write "local f\n"
+
+for i = 1, n, m do
+  io.write "f = function ()\n"
+  for j = i, math.min(n, i + m - 1) do
+    io.write("_[", j, "]={")
+
+    local data = dataset[j]
+    for k = 1, #data do
+      local item = data[k]
+      if type(item) == "number" then
+        io.write(("%.17g;"):format(item))
+      else
+        io.write(("%q;"):format(item))
+      end
     end
+
+    io.write("}\n")
   end
-  io.write "};\n"
+  io.write "end\n"
+  io.write "f()\n"
 end
-io.write "}\n"
+
+io.write "return _\n"
