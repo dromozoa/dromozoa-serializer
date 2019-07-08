@@ -16,7 +16,9 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local function read(handle, op, map)
-  if op == 1 then
+  if op == 0 then
+    return nil
+  elseif op == 1 then
     return true
   elseif op == 2 then
     return false
@@ -29,9 +31,15 @@ local function read(handle, op, map)
     local ref = handle:read "*n"
     return map[ref]
   elseif op == 7 then
-    local ref = handle:read "*n"
+    local ref, n = handle:read("*n", "*n")
     local u = {}
     map[ref] = u
+
+    for i = 1, n do
+      local op = handle:read "*n"
+      local v = read(handle, op, map)
+      u[i] = v
+    end
 
     while true do
       local op = handle:read "*n"

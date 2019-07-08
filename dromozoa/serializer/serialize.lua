@@ -21,7 +21,9 @@ local math_type = math.type
 
 local function write(handle, u, map, max)
   local t = type(u)
-  if t == "boolean" then
+  if t == "nil" then
+    handle:write "0\n"
+  elseif t == "boolean" then
     if u then
       handle:write "1\n"
     else
@@ -43,14 +45,27 @@ local function write(handle, u, map, max)
       handle:write("6 ", ref, "\n")
     else
       max = max + 1
-      handle:write("7 ", max, "\n")
+      local n = #u
+      handle:write("7 ", max, " ", n, "\n")
       map[u] = max
-      for k, v in pairs(u) do
-        max = write(handle, k, map, max)
-        max = write(handle, v, map, max)
+
+      local written = {}
+      for i = 1, n do
+        max = write(handle, u[i], map, max)
+        written[i] = true
       end
+
+      for k, v in pairs(u) do
+        if not written[k] then
+          max = write(handle, k, map, max)
+          max = write(handle, v, map, max)
+        end
+      end
+
       handle:write("8\n")
     end
+  else
+    error(("unsupported type %s"):format(t))
   end
   return max
 end
@@ -114,7 +129,7 @@ end
 
 return function (handle, u)
   handle:write "1\n"
-  print(collectgarbage "count")
+  -- print(collectgarbage "count")
   write(handle, u, {}, 0)
   -- local buffer = {}
   -- build(buffer, 0, u, {}, 0)
@@ -125,5 +140,5 @@ return function (handle, u)
   -- local s = table.concat(buffer, "\n")
   -- print(collectgarbage "count")
   -- handle:write(s, "\n")
-  print(collectgarbage "count")
+  -- print(collectgarbage "count")
 end
