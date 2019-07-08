@@ -32,14 +32,14 @@ if buffer_size then
   handle:setvbuf("full", tonumber(buffer_size))
 end
 timer:start()
-serializer.serialize(handle, source)
+serializer.save_handle(handle, source)
 timer:stop()
 handle:close()
 print("serialize", timer:elapsed())
 
 local handle = io.open(result_filename, "rb")
 timer:start()
-local result = serializer.deserialize(handle)
+local result = serializer.load_handle(handle)
 timer:stop()
 handle:close()
 print("deserialize", timer:elapsed())

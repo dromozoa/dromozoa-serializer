@@ -16,7 +16,6 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local unix = require "dromozoa.unix"
-local serializer = require "dromozoa.serializer"
 
 local json_module, source_filename, result_filename = ...
 
