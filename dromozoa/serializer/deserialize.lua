@@ -26,12 +26,12 @@ local function read(handle, op, map)
     local n = handle:read("*n", 1)
     return handle:read(n)
   elseif op == 6 then
-    local n = handle:read "*n"
-    return map[n]
+    local ref = handle:read "*n"
+    return map[ref]
   elseif op == 7 then
-    local n = handle:read "*n"
-    local result = {}
-    map[n] = result
+    local ref = handle:read "*n"
+    local u = {}
+    map[ref] = u
 
     while true do
       local op = handle:read "*n"
@@ -41,10 +41,10 @@ local function read(handle, op, map)
       local k = read(handle, op, map)
       local op = handle:read "*n"
       local v = read(handle, op, map)
-      result[k] = v
+      u[k] = v
     end
 
-    return result
+    return u
   else
     error(("unknown op %s"):format(op))
   end
@@ -55,5 +55,7 @@ return function (handle)
   if version == 1 then
     local op = handle:read "*n"
     return read(handle, op, {})
+  else
+    error(("unknown version %d"):format(version))
   end
 end
