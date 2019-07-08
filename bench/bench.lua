@@ -18,7 +18,7 @@
 local unix = require "dromozoa.unix"
 local serializer = require "dromozoa.serializer"
 
-local source_filename, result_filename = ...
+local source_filename, result_filename, buffer_size = ...
 
 local timer = unix.timer()
 
@@ -28,6 +28,9 @@ timer:stop()
 print("loadfile", timer:elapsed())
 
 local handle = io.open(result_filename, "wb")
+if buffer_size then
+  handle:setvbuf("full", tonumber(buffer_size))
+end
 timer:start()
 serializer.serialize(handle, source)
 timer:stop()
