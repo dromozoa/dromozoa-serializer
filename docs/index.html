@@ -141,6 +141,28 @@
 9 END
 </pre>
 
+<h2>RAMディスク</h2>
+
+<h3>macOS</h3>
+
+<pre>
+man hdiutil
+</pre>
+
+<pre>
+Creating a RAM-backed device and filesystem:
+
+      NUMSECTORS=128000       # a sector is 512 bytes
+      mydev=`hdiutil attach -nomount ram://$NUMSECTORS`
+      newfs_hfs $mydev
+      mkdir /tmp/mymount
+      mount -t hfs $mydev /tmp/mymount
+</pre>
+
+<p>
+簡易ベンチマークはRAMディスクを使っても速くならなかった。
+</p>
+
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </body>
