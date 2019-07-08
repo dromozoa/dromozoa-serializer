@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local json = require "cjson"
-local json = require "dromozoa.commons.json"
 local unix = require "dromozoa.unix"
 local serializer = require "dromozoa.serializer"
 
-local source_filename, result_filename = ...
+local json_module, source_filename, result_filename = ...
+
+local json = require(json_module)
 
 local timer = unix.timer()
 
