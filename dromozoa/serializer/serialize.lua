@@ -62,6 +62,7 @@ local function serialize(handle, v)
       n = serialize_value(handle, v, map, n)
     end
   end
+  handle:write "9\n"
 end
 
 return function (handle, root)

@@ -49,12 +49,11 @@ local function deserialize(handle)
   local u
   while true do
     local op = handle:read "*n"
-    if not op then
-      break
-    end
     if op == 8 then
       local n = handle:read "*n"
       u = map[n]
+    elseif op == 9 then
+      break
     else
       local k = deserialize_value(handle, op, map)
       local op = handle:read "*n"
