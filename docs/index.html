@@ -130,16 +130,38 @@
 <h3>命令セット</h3>
 
 <pre>
-1 FALSE
-2 TRUE
-3 NUMBER  data
-4 INTEGER data
+0 NIL
+1 TRUE
+2 FALSE
+3 INTEGER data
+4 NUMBER  data
 5 STRING  n:data
-6 NEW     r
-7 REF     r
-8 BEGIN   r
-9 END
+6 REF     r
+7 NEW     r n
+8 END
 </pre>
+
+<h2>RAMディスク</h2>
+
+<h3>macOS</h3>
+
+<pre>
+man hdiutil
+</pre>
+
+<pre>
+Creating a RAM-backed device and filesystem:
+
+      NUMSECTORS=128000       # a sector is 512 bytes
+      mydev=`hdiutil attach -nomount ram://$NUMSECTORS`
+      newfs_hfs $mydev
+      mkdir /tmp/mymount
+      mount -t hfs $mydev /tmp/mymount
+</pre>
+
+<p>
+簡易ベンチマークはRAMディスクを使っても速くならなかった。
+</p>
 
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>

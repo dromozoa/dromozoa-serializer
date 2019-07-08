@@ -19,53 +19,126 @@ local pairs = pairs
 local type = type
 local math_type = math.type
 
-local function serialize_value(handle, v, map, n)
-  local t = type(v)
-  if t == "boolean" then
-    if v then
-      handle:write "2\n"
-    else
+local function write(handle, u, map, max)
+  local t = type(u)
+  if t == "nil" then
+    handle:write "0\n"
+  elseif t == "boolean" then
+    if u then
       handle:write "1\n"
+    else
+      handle:write "2\n"
     end
   elseif t == "number" then
-    if math_type(v) == "integer" then
-      handle:write("4 ", v, "\n")
+    if math_type and math_type(u) == "integer" then
+      handle:write("3 ", u, "\n")
+    elseif u % 1 == 0 then
+      handle:write("4 ", u, "\n")
     else
-      handle:write("3 ", ("%.17g"):format(v), "\n")
+      handle:write("4 ", ("%.17g"):format(u), "\n")
     end
   elseif t == "string" then
-    handle:write("5 ", #v, ":", v, "\n")
+    handle:write("5 ", #u, ":", u, "\n")
   elseif t == "table" then
-    local m = map[v]
-    if m then
-      handle:write("7 ", m, "\n")
+    local ref = map[u]
+    if ref then
+      handle:write("6 ", ref, "\n")
     else
-      n = n + 1
-      handle:write("6 ", n, "\n")
-      map[v] = n
-      map[n] = v
+      max = max + 1
+      local n = #u
+      handle:write("7 ", max, " ", n, "\n")
+      map[u] = max
+
+      local written = {}
+      for i = 1, n do
+        max = write(handle, u[i], map, max)
+        written[i] = true
+      end
+
+      for k, v in pairs(u) do
+        if not written[k] then
+          max = write(handle, k, map, max)
+          max = write(handle, v, map, max)
+        end
+      end
+
+      handle:write("8\n")
     end
+  else
+    error(("unsupported type %s"):format(t))
   end
-  return n
+  return max
 end
 
-local function serialize(handle, v)
-  local map = {}
-  local n = serialize_value(handle, v, map, 0)
-  local m = 0
-  while m < n do
-    m = m + 1
-    handle:write("8 ", m, "\n")
-    local u = map[m]
-    for k, v in pairs(u) do
-      n = serialize_value(handle, k, map, n)
-      n = serialize_value(handle, v, map, n)
+local function build(buffer, i, u, map, max)
+  local t = type(u)
+  if t == "boolean" then
+    if u then
+      i = i + 1
+      buffer[i] = "1"
+    else
+      i = i + 1
+      buffer[i] = "2"
+    end
+  elseif t == "number" then
+    if math_type and math_type(u) == "integer" then
+      i = i + 1
+      buffer[i] = "3"
+      i = i + 1
+      buffer[i] = u
+    elseif u % 1 == 0 then
+      i = i + 1
+      buffer[i] = "4"
+      i = i + 1
+      buffer[i] = u
+    else
+      i = i + 1
+      buffer[i] = "4"
+      i = i + 1
+      buffer[i] = ("%.17g"):format(u)
+    end
+  elseif t == "string" then
+    i = i + 1
+    buffer[i] = "5"
+    i = i + 1
+    buffer[i] = #u .. ":" .. u
+  elseif t == "table" then
+    local ref = map[u]
+    if ref then
+      i = i + 1
+      buffer[i] = "6"
+      i = i + 1
+      buffer[i] = ref
+    else
+      max = max + 1
+      i = i + 1
+      buffer[i] = "7"
+      i = i + 1
+      buffer[i] = max
+      map[u] = max
+      for k, v in pairs(u) do
+        i, max = build(buffer, i, k, map, max)
+        i, max = build(buffer, i, v, map, max)
+      end
+      i = i + 1
+      buffer[i] = "8"
     end
   end
-  handle:write "9\n"
+  return i, max
 end
 
-return function (handle, root)
-  handle:write "1\n" -- version
-  serialize(handle, root)
+return function (handle, u)
+  handle:write "1\n"
+  -- print(collectgarbage "count")
+  write(handle, u, {}, 0)
+  -- local buffer = {}
+  -- build(buffer, 0, u, {}, 0)
+  -- print(collectgarbage "count")
+  -- for i = 1, #buffer do
+  --   handle:write(buffer[i], "\n")
+  -- end
+  -- local s = table.concat(buffer, "\n")
+  -- print(collectgarbage "count")
+  -- handle:write(s, "\n")
+  -- print(collectgarbage "count")
 end

@@ -17,39 +17,77 @@
 
 local serializer = require "dromozoa.serializer"
 
-io.write(("="):rep(60), "\n")
-serializer.serialize(io.stdout, 3.14)
-io.write(("="):rep(60), "\n")
-serializer.serialize(io.stdout, 42)
-io.write(("="):rep(60), "\n")
-serializer.serialize(io.stdout, true)
-io.write(("="):rep(60), "\n")
-serializer.serialize(io.stdout, "foo")
-io.write(("="):rep(60), "\n")
-serializer.serialize(io.stdout, {
+local verbose = os.getenv "VERBOSE" == "1"
+
+local handle
+if verbose then
+  handle = io.stdout
+else
+  handle = assert(io.open("/dev/null", "wb"))
+end
+
+handle:write(("="):rep(60), "\n")
+serializer.serialize(handle, 3.14)
+handle:write(("="):rep(60), "\n")
+serializer.serialize(handle, 42)
+handle:write(("="):rep(60), "\n")
+serializer.serialize(handle, true)
+handle:write(("="):rep(60), "\n")
+serializer.serialize(handle, "foo")
+handle:write(("="):rep(60), "\n")
+serializer.serialize(handle, {
   foo = 42;
   bar = "baz";
 })
 
-io.write(("="):rep(60), "\n")
-local x = { name = "x"; }
-local y = { name = "y";  to = x }
-local z = { name = "z";  to = y }
-x.to = z
-serializer.serialize(io.stdout, x)
+if not verbose then
+  handle:close()
+end
+handle = nil
 
-local handle = assert(io.open("test.dat", "wb"))
+local x = { name = "x"; }
+local y = { name = "y"; }
+local z = { name = "z"; }
+x.to = y
+y.to = z
+z.to = x
+
+local handle = assert(io.open("test1.dat", "wb"))
+serializer.serialize(handle, x)
+handle:close()
+
+local handle = assert(io.open("test1.dat", "rb"))
+local data = serializer.deserialize(handle)
+handle:close()
+
+assert(data.name == "x")
+assert(data.to.name == "y")
+assert(data.to.to.name == "z")
+assert(data.to.to.to.name == "x")
+
+local handle = assert(io.open("test2.dat", "wb"))
 serializer.serialize(handle, {
-  foo = true;
+  foo = false;
   bar = 42;
   baz = { {1}, {2}, {3}, {4}, "    1234    " };
   qux = {{{{}}}};
 })
 handle:close()
 
-local handle = assert(io.open("test.dat", "rb"))
+local handle = assert(io.open("test2.dat", "rb"))
 local data = serializer.deserialize(handle)
 handle:close()
+assert(data.foo == false)
+assert(data.bar == 42)
+assert(data.baz[1][1] == 1)
+assert(data.baz[2][1] == 2)
+assert(data.baz[3][1] == 3)
+assert(data.baz[4][1] == 4)
 assert(data.baz[5] == "    1234    ")
+assert(#data.qux == 1)
+assert(#data.qux[1] == 1)
+assert(#data.qux[1][1] == 1)
+assert(#data.qux[1][1][1] == 0)
 
-os.remove "test.dat"
+os.remove "test1.dat"
+os.remove "test2.dat"
