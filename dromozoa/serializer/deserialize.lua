@@ -17,24 +17,35 @@
 
 local function deserialize_value(handle, op, map)
   if op == 1 then
-    return false
-  elseif op == 2 then
     return true
+  elseif op == 2 then
+    return false
   elseif op == 3 or op == 4 then
     return handle:read "*n"
   elseif op == 5 then
-    local n = handle:read "*n"
-    handle:read(1) -- ":"
+    local n = handle:read("*n", 1)
     local result = handle:read(n)
     return result
   elseif op == 6 then
     local n = handle:read "*n"
-    local result = {}
-    map[n] = result
-    return result
+    return map[n]
   elseif op == 7 then
     local n = handle:read "*n"
-    return map[n]
+    local result = {}
+    map[n] = result
+
+    while true do
+      local op = handle:read "*n"
+      if op == 8 then
+        break
+      end
+      local k = deserialize_value(handle, op, map)
+      local op = handle:read "*n"
+      local v = deserialize_value(handle, op, map)
+      result[k] = v
+    end
+
+    return result
   else
     error(("unknown op %s"):format(op))
   end
@@ -45,22 +56,6 @@ local function deserialize(handle)
 
   local op = handle:read "*n"
   local result = deserialize_value(handle, op, map)
-
-  local u
-  while true do
-    local op = handle:read "*n"
-    if op == 8 then
-      local n = handle:read "*n"
-      u = map[n]
-    elseif op == 9 then
-      break
-    else
-      local k = deserialize_value(handle, op, map)
-      local op = handle:read "*n"
-      local v = deserialize_value(handle, op, map)
-      u[k] = v
-    end
-  end
 
   return result
 end
