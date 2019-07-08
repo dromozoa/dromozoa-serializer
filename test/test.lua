@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
+local json = require "dromozoa.commons.json"
 local serializer = require "dromozoa.serializer"
 
 io.write(("="):rep(60), "\n")
@@ -37,4 +38,22 @@ local y = { name = "y";  to = x }
 local z = { name = "z";  to = y }
 x.to = z
 serializer.serialize(io.stdout, x)
+
+local handle = assert(io.open("test.dat", "wb"))
+serializer.serialize(handle, {
+  foo = true;
+  bar = 42;
+  baz = { {1}, {2}, {3}, {4}, "    1234    " };
+  qux = {{{{}}}};
+})
+handle:close()
+
+local handle = assert(io.open("test.dat", "rb"))
+local data = serializer.deserialize(handle)
+handle:close()
+assert(data.baz[5] == "    1234    ")
+
+-- print(json.encode(data, { pretty = true }))
+
+
 

@@ -23,9 +23,9 @@ local function serialize_value(handle, v, map, n)
   local t = type(v)
   if t == "boolean" then
     if v then
-      handle:write "1\n"
-    else
       handle:write "2\n"
+    else
+      handle:write "1\n"
     end
   elseif t == "number" then
     if math_type(v) == "integer" then
@@ -34,7 +34,7 @@ local function serialize_value(handle, v, map, n)
       handle:write("3 ", ("%.17g"):format(v), "\n")
     end
   elseif t == "string" then
-    handle:write("5 ", #v, ":", v, ",\n")
+    handle:write("5 ", #v, ":", v, "\n")
   elseif t == "table" then
     local m = map[v]
     if m then
@@ -52,7 +52,6 @@ end
 local function serialize(handle, v)
   local map = {}
   local n = serialize_value(handle, v, map, 0)
-
   local m = 0
   while m < n do
     m = m + 1
@@ -66,6 +65,6 @@ local function serialize(handle, v)
 end
 
 return function (handle, root)
-  handle:write "1\n"
+  handle:write "1\n" -- version
   serialize(handle, root)
 end

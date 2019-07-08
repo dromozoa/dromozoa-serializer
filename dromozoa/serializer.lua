@@ -16,5 +16,6 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 return {
+  deserialize = require "dromozoa.serializer.deserialize";
   serialize = require "dromozoa.serializer.serialize";
 }
