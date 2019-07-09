@@ -19,58 +19,65 @@ local pairs = pairs
 local type = type
 local math_type = math.type
 
-local function write(handle, u, map, max)
-  local t = type(u)
-  if t == "nil" then
-    handle:write "0\n"
-  elseif t == "boolean" then
-    if u then
-      handle:write "1\n"
-    else
-      handle:write "2\n"
-    end
-  elseif t == "number" then
-    if math_type and math_type(u) == "integer" then
-      handle:write("3 ", u, "\n")
-    elseif u % 1 == 0 then
-      handle:write("4 ", u, "\n")
-    else
-      handle:write("4 ", ("%.17g"):format(u), "\n")
-    end
-  elseif t == "string" then
-    handle:write("5 ", #u, ":", u, "\n")
-  elseif t == "table" then
-    local ref = map[u]
-    if ref then
-      handle:write("6 ", ref, "\n")
-    else
-      max = max + 1
-      local n = #u
-      handle:write("7 ", max, " ", n, "\n")
-      map[u] = max
-
-      local written = {}
-      for i = 1, n do
-        max = write(handle, u[i], map, max)
-        written[i] = true
-      end
-
-      for k, v in pairs(u) do
-        if not written[k] then
-          max = write(handle, k, map, max)
-          max = write(handle, v, map, max)
-        end
-      end
-
-      handle:write("8\n")
-    end
+local function write(handle, u, dict, max)
+  if u == nil then
+    handle:write "1 0\n"
   else
-    error(("unsupported type %s"):format(t))
+    local t = type(u)
+    if t == "boolean" then
+      if u then
+        handle:write "1 1\n"
+      else
+        handle:write "1 2\n"
+      end
+    elseif t == "number" then
+      if math_type and math_type(u) == "integer" then
+        handle:write("2 ", u, "\n")
+      elseif u % 1 == 0 then
+        handle:write("3 ", u, "\n")
+      else
+        handle:write("3 ", ("%.17g"):format(u), "\n")
+      end
+    elseif t == "string" then
+      handle:write("4 ", #u, ":", u, "\n")
+    elseif t == "table" then
+      local ref = dict[u]
+      if ref then
+        handle:write("1 ", ref, "\n")
+      else
+        max = max + 1
+        local n = #u
+        handle:write("6 ", max, " ", n, "\n")
+        dict[u] = max
+
+        local written = {}
+        for i = 1, n do
+          max = write(handle, u[i], dict, max)
+          written[i] = true
+        end
+
+        for k, v in pairs(u) do
+          if not written[k] then
+            max = write(handle, k, dict, max)
+            max = write(handle, v, dict, max)
+          end
+        end
+
+        handle:write("7 0\n")
+      end
+    else
+      error(("unsupported type %s"):format(t))
+    end
   end
+
   return max
 end
 
 return function (handle, u)
   handle:write "1\n"
-  write(handle, u, {}, 0)
+  local dict = {
+    [true] = 1;
+    [false] = 2;
+  }
+  write(handle, u, dict, 2)
 end

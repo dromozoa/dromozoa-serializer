@@ -129,17 +129,40 @@
 
 <h3>命令セット</h3>
 
-<pre>
-0 NIL
-1 TRUE
-2 FALSE
-3 INTEGER data
-4 NUMBER  data
-5 STRING  n:data
-6 REF     r
-7 NEW     r n
-8 END
-</pre>
+<table>
+  <tr>
+    <th>code</th>
+    <th>name</th>
+  </tr>
+  <tr>
+    <td><code>1 ref</code></td>
+    <td>Lookup</td>
+  </tr>
+  <tr>
+    <td><code>2 data</code></td>
+    <td>Integer (int64_t)</td>
+  </tr>
+  <tr>
+    <td><code>3 data</code></td>
+    <td>Number (double)</td>
+  </tr>
+  <tr>
+    <td><code>4 size:data</code></td>
+    <td>String (instant)</td>
+  </tr>
+  <tr>
+    <td><code>5 ref size:data</code></td>
+    <td>String (dictionary)</td>
+  </tr>
+  <tr>
+    <td><code>6 ref size</code></td>
+    <td>Table</td>
+  </tr>
+  <tr>
+    <td><code>7 0</code></td>
+    <td>End</td>
+  </tr>
+</table>
 
 <h2>RAMディスク</h2>
 
