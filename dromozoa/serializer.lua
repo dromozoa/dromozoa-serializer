@@ -16,6 +16,6 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 return {
-  load = require "dromozoa.serializer.load";
-  save = require "dromozoa.serializer.save";
+  read = require "dromozoa.serializer.read";
+  write = require "dromozoa.serializer.write";
 }

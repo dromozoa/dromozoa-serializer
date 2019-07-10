@@ -27,15 +27,15 @@ else
 end
 
 handle:write(("="):rep(60), "\n")
-serializer.save(handle, 3.14)
+serializer.write(handle, 3.14)
 handle:write(("="):rep(60), "\n")
-serializer.save(handle, 42)
+serializer.write(handle, 42)
 handle:write(("="):rep(60), "\n")
-serializer.save(handle, true)
+serializer.write(handle, true)
 handle:write(("="):rep(60), "\n")
-serializer.save(handle, "foo")
+serializer.write(handle, "foo")
 handle:write(("="):rep(60), "\n")
-serializer.save(handle, {
+serializer.write(handle, {
   foo = 42;
   bar = "baz";
 })
@@ -53,11 +53,11 @@ y.to = z
 z.to = x
 
 local handle = assert(io.open("test1.dat", "wb"))
-serializer.save(handle, x)
+serializer.write(handle, x)
 handle:close()
 
 local handle = assert(io.open("test1.dat", "rb"))
-local data = serializer.load(handle)
+local data = serializer.read(handle)
 handle:close()
 
 assert(data.name == "x")
@@ -66,7 +66,7 @@ assert(data.to.to.name == "z")
 assert(data.to.to.to.name == "x")
 
 local handle = assert(io.open("test2.dat", "wb"))
-serializer.save(handle, {
+serializer.write(handle, {
   foo = false;
   bar = 42;
   baz = { {1}, {2}, {3}, {4}, "    1234    " };
@@ -75,7 +75,7 @@ serializer.save(handle, {
 handle:close()
 
 local handle = assert(io.open("test2.dat", "rb"))
-local data = serializer.load(handle)
+local data = serializer.read(handle)
 handle:close()
 assert(data.foo == false)
 assert(data.bar == 42)
