@@ -16,9 +16,8 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local unix = require "dromozoa.unix"
-local serializer = require "dromozoa.serializer"
 
-local json_module, source_filename, result_filename = ...
+local json_module, source_filename, result_filename, buffer_size = ...
 
 local json = require(json_module)
 
@@ -29,12 +28,19 @@ local source = assert(loadfile(source_filename))()
 timer:stop()
 print("loadfile", timer:elapsed())
 
+local handle = io.open(result_filename, "wb")
+if buffer_size then
+  handle:setvbuf("full", tonumber(buffer_size))
+end
 timer:start()
-local encoded = json.encode(source)
+handle:write(json.encode(source))
 timer:stop()
+handle:close()
 print("json.encode", timer:elapsed())
 
+local handle = io.open(result_filename, "rb")
 timer:start()
-local decoded = json.decode(encoded)
+local result = json.decode(handle:read "*a")
 timer:stop()
+handle:close()
 print("json.decode", timer:elapsed())

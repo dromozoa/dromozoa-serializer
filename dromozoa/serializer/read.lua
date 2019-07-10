@@ -15,44 +15,41 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local function read(handle, op, map)
-  if op == 0 then
-    return nil
-  elseif op == 1 then
-    return true
-  elseif op == 2 then
-    return false
-  elseif op == 3 or op == 4 then
-    return handle:read "*n"
+local function read(handle, dict)
+  local op, x = handle:read("*n", "*n")
+  if op == 1 then
+    return dict[x]
+  elseif op == 2 or op == 3 then
+    return x
+  elseif op == 4 then
+    local _, u = handle:read(1, x)
+    return u
   elseif op == 5 then
-    local n = handle:read("*n", 1)
-    return handle:read(n)
+    local y = handle:read("*n", 1)
+    local u = handle:read(y)
+    dict[x] = u
+    return u
   elseif op == 6 then
-    local ref = handle:read "*n"
-    return map[ref]
-  elseif op == 7 then
-    local ref, n = handle:read("*n", "*n")
+    local y = handle:read("*n")
     local u = {}
-    map[ref] = u
+    dict[x] = u
 
-    for i = 1, n do
-      local op = handle:read "*n"
-      local v = read(handle, op, map)
-      u[i] = v
+    for i = 1, y do
+      u[i] = read(handle, dict)
     end
 
     while true do
-      local op = handle:read "*n"
-      if op == 8 then
+      local k = read(handle, dict)
+      if k == nil then
         break
       end
-      local k = read(handle, op, map)
-      local op = handle:read "*n"
-      local v = read(handle, op, map)
+      local v = read(handle, dict)
       u[k] = v
     end
 
     return u
+  elseif op == 7 then
+    return nil
   else
     error(("unknown op %s"):format(op))
   end
@@ -61,8 +58,8 @@ end
 return function (handle)
   local version = handle:read "*n"
   if version == 1 then
-    local op = handle:read "*n"
-    return read(handle, op, {})
+    local dict = { true, false }
+    return read(handle, dict)
   else
     error(("unknown version %d"):format(version))
   end
