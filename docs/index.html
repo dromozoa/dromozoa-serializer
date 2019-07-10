@@ -48,6 +48,8 @@
 
 <h2>コード</h2>
 
+<h3>Luaの値</h3>
+
 <table>
   <tr>
     <th>major</th>
@@ -99,7 +101,7 @@
   </tr>
 </table>
 
-<h3>Lua 5.4ヘッダ</h3>
+<h4>Lua 5.4ヘッダ</h4>
 
 <pre class="prettyprint lang-c">
 /* Variant tags for numbers */
@@ -113,7 +115,7 @@
 #define LUA_TLNGSTR	(LUA_TSTRING | (2 &lt;&lt; 4))  /* long strings */
 </pre>
 
-<h3>Lua 5.3ヘッダ</h3>
+<h4>Lua 5.3ヘッダ</h4>
 
 <pre class="prettyprint lang-c">
 /* Variant tags for numbers */
@@ -161,6 +163,27 @@
   <tr>
     <td><code>7 0</code></td>
     <td>End</td>
+  </tr>
+</table>
+
+<h3>初期辞書</h3>
+
+<table>
+  <tr>
+    <th>code</th>
+    <th>value</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td><code>nil</code></td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>false</code></td>
   </tr>
 </table>
 
