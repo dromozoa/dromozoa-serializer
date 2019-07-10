@@ -16,23 +16,26 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local function read(handle, dict)
-  local op = handle:read "*n"
+  local op, x = handle:read("*n", "*n")
   if op == 1 then
-    local ref = handle:read "*n"
-    return dict[ref]
+    return dict[x]
   elseif op == 2 or op == 3 then
-    return handle:read "*n"
+    return x
   elseif op == 4 then
-    local size = handle:read("*n", 1)
-    return handle:read(size)
+    local _, u = handle:read(1, x)
+    return u
+  elseif op == 5 then
+    local y = handle:read("*n", 1)
+    local u = handle:read(y)
+    dict[x] = u
+    return u
   elseif op == 6 then
-    local ref, size = handle:read("*n", "*n")
+    local y = handle:read("*n")
     local u = {}
-    dict[ref] = u
+    dict[x] = u
 
-    for i = 1, size do
-      local v = read(handle, dict)
-      u[i] = v
+    for i = 1, y do
+      u[i] = read(handle, dict)
     end
 
     while true do
@@ -46,7 +49,6 @@ local function read(handle, dict)
 
     return u
   elseif op == 7 then
-    handle:read "*n"
     return nil
   else
     error(("unknown op %s"):format(op))

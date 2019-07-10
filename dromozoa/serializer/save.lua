@@ -19,7 +19,7 @@ local pairs = pairs
 local type = type
 local math_type = math.type
 
-local function write(handle, u, dict, max)
+local function write(handle, u, dict, max, string_dictionary)
   if u == nil then
     handle:write "1 0\n"
   else
@@ -39,7 +39,18 @@ local function write(handle, u, dict, max)
         handle:write("3 ", ("%.17g"):format(u), "\n")
       end
     elseif t == "string" then
-      handle:write("4 ", #u, ":", u, "\n")
+      if string_dictionary then
+        local ref = dict[u]
+        if ref then
+          handle:write("1 ", ref, "\n")
+        else
+          max = max + 1
+          handle:write("5 ", max, " ", #u, ":", u, "\n")
+          dict[u] = max
+        end
+      else
+        handle:write("4 ", #u, ":", u, "\n")
+      end
     elseif t == "table" then
       local ref = dict[u]
       if ref then
@@ -52,14 +63,14 @@ local function write(handle, u, dict, max)
 
         local written = {}
         for i = 1, n do
-          max = write(handle, u[i], dict, max)
+          max = write(handle, u[i], dict, max, string_dictionary)
           written[i] = true
         end
 
         for k, v in pairs(u) do
           if not written[k] then
-            max = write(handle, k, dict, max)
-            max = write(handle, v, dict, max)
+            max = write(handle, k, dict, max, string_dictionary)
+            max = write(handle, v, dict, max, string_dictionary)
           end
         end
 
@@ -73,11 +84,11 @@ local function write(handle, u, dict, max)
   return max
 end
 
-return function (handle, u)
+return function (handle, u, string_dictionary)
   handle:write "1\n"
   local dict = {
     [true] = 1;
     [false] = 2;
   }
-  write(handle, u, dict, 2)
+  write(handle, u, dict, 2, string_dictionary)
 end
