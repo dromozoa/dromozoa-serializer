@@ -19,8 +19,10 @@ local function read(handle, dict)
   local op, x = handle:read("*n", "*n")
   if op == 1 then
     return dict[x]
-  elseif op == 2 or op == 3 then
+  elseif op == 2 then
     return x
+  elseif op == 3 then
+    return x + 0.0
   elseif op == 4 then
     local _, u = handle:read(1, x)
     return u

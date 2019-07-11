@@ -36,6 +36,7 @@ local function test_case(write)
   test(true)
   test(3.14)
   test(42)
+  test(42.0)
   test("foo")
 
   local x = { name = "x"; }

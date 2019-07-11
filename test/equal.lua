@@ -15,30 +15,42 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
+local pairs = pairs
+local type = type
+local math_type = math.type
+
 local function equal(a, b, dict)
-  if a == b then
-    return true
-  elseif type(a) == "table" and type(b) == "table" then
-    if dict[a] then
+  local x = type(a)
+  local y = type(b)
+  if x == y then
+    if x == "number" then
+      if math_type and math_type(a) ~= math_type(b) then
+        return false
+      else
+        return a == b
+      end
+    elseif x == "table" then
+      if dict[a] then
+        return true
+      else
+        dict[a] = true
+      end
+      for k, u in pairs(a) do
+        local v = b[k]
+        if v == nil or not equal(u, v, dict) then
+          return false
+        end
+      end
+      for k, v in pairs(b) do
+        local u = a[k]
+        if u == nil then
+          return false
+        end
+      end
       return true
     else
-      dict[a] = true
+      return a == b
     end
-    for k, u in pairs(a) do
-      local v = b[k]
-      if v == nil or not equal(u, v, dict) then
-        return false
-      end
-    end
-    for k, v in pairs(b) do
-      local u = a[k]
-      if u == nil then
-        return false
-      end
-    end
-    return true
-  else
-    return false
   end
 end
 
