@@ -18,8 +18,6 @@
 local serializer = require "dromozoa.serializer"
 local equal = require "test.equal"
 
-local verbose = os.getenv "VERBOSE" == "1"
-
 local function test_case(write)
   local function test(source)
     local handle = assert(io.open("test.dat", "wb"))
