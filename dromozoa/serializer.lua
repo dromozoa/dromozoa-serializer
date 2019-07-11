@@ -18,4 +18,5 @@
 return {
   read = require "dromozoa.serializer.read";
   write = require "dromozoa.serializer.write";
+  write_v1 = require "dromozoa.serializer.write_v1";
 }
