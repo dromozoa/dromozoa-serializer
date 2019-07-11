@@ -20,77 +20,52 @@ local equal = require "test.equal"
 
 local verbose = os.getenv "VERBOSE" == "1"
 
-local handle
-if verbose then
-  handle = io.stdout
-else
-  handle = assert(io.open("/dev/null", "wb"))
+local function test_case(write)
+  local function test(source)
+    local handle = assert(io.open("test.dat", "wb"))
+    write(handle, source)
+    handle:close()
+
+    local handle = assert(io.open("test.dat", "rb"))
+    local result = serializer.read(handle)
+    handle:close()
+
+    assert(equal(source, result))
+  end
+
+  test(nil)
+  test(false)
+  test(true)
+  test(3.14)
+  test(42)
+  test("foo")
+
+  local x = { name = "x"; }
+  local y = { name = "y"; }
+  local z = { name = "z"; }
+  x.to = y
+  y.to = z
+  z.to = x
+  test(x)
+
+  test {
+    foo = false;
+    bar = 42;
+    baz = { {1}, {2}, {3}, {4}, "    1234    " };
+    qux = {{{{}}}};
+  }
+
+  test {
+    [1] = true;
+    [2] = false;
+    [3] = nil;
+    [4] = 42;
+    foo = true;
+    bar = false;
+    baz = nil;
+    qux = 42;
+  }
 end
 
-handle:write(("="):rep(60), "\n")
-serializer.write(handle, 3.14)
-handle:write(("="):rep(60), "\n")
-serializer.write(handle, 42)
-handle:write(("="):rep(60), "\n")
-serializer.write(handle, true)
-handle:write(("="):rep(60), "\n")
-serializer.write(handle, "foo")
-handle:write(("="):rep(60), "\n")
-serializer.write(handle, {
-  foo = 42;
-  bar = "baz";
-})
-
-if not verbose then
-  handle:close()
-end
-handle = nil
-
-local x = { name = "x"; }
-local y = { name = "y"; }
-local z = { name = "z"; }
-x.to = y
-y.to = z
-z.to = x
-
-local handle = assert(io.open("test1.dat", "wb"))
-serializer.write(handle, x)
-handle:close()
-
-local handle = assert(io.open("test1.dat", "rb"))
-local data = serializer.read(handle)
-handle:close()
-
-assert(data.name == "x")
-assert(data.to.name == "y")
-assert(data.to.to.name == "z")
-assert(data.to.to.to.name == "x")
-
-assert(equal(x, data))
-
-local handle = assert(io.open("test2.dat", "wb"))
-serializer.write(handle, {
-  foo = false;
-  bar = 42;
-  baz = { {1}, {2}, {3}, {4}, "    1234    " };
-  qux = {{{{}}}};
-})
-handle:close()
-
-local handle = assert(io.open("test2.dat", "rb"))
-local data = serializer.read(handle)
-handle:close()
-assert(data.foo == false)
-assert(data.bar == 42)
-assert(data.baz[1][1] == 1)
-assert(data.baz[2][1] == 2)
-assert(data.baz[3][1] == 3)
-assert(data.baz[4][1] == 4)
-assert(data.baz[5] == "    1234    ")
-assert(#data.qux == 1)
-assert(#data.qux[1] == 1)
-assert(#data.qux[1][1] == 1)
-assert(#data.qux[1][1][1] == 0)
-
-os.remove "test1.dat"
-os.remove "test2.dat"
+test_case(serializer.write)
+test_case(function (handle, source) serializer.write(handle, source, true) end)
