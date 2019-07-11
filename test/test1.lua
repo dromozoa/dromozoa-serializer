@@ -16,6 +16,7 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local serializer = require "dromozoa.serializer"
+local equal = require "test.equal"
 
 local verbose = os.getenv "VERBOSE" == "1"
 
@@ -64,6 +65,8 @@ assert(data.name == "x")
 assert(data.to.name == "y")
 assert(data.to.to.name == "z")
 assert(data.to.to.to.name == "x")
+
+assert(equal(x, data))
 
 local handle = assert(io.open("test2.dat", "wb"))
 serializer.write(handle, {
