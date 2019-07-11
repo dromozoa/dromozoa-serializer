@@ -1,0 +1,5 @@
+.*.swp
+/bench/KEN_ALL.CSV
+/bench/UnicodeData.txt
+/bench/postcode.lua
+/bench/unicode.lua
