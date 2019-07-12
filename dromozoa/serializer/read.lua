@@ -17,6 +17,8 @@
 
 local read_v1 = require "dromozoa.serializer.read_v1"
 
+local error = error
+
 return function (handle)
   local version = handle:read "*n"
   if version == 1 then

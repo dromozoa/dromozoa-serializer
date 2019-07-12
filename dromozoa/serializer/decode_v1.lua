@@ -15,8 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local tonumber = tonumber
 local error = error
+local tonumber = tonumber
 
 local function decode(source, p, dict)
   local op = source:byte(p)

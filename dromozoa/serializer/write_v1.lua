@@ -34,8 +34,6 @@ local function write(handle, u, dict, max, string_dictionary)
     elseif t == "number" then
       if math_type and math_type(u) == "integer" then
         handle:write("\n2 ", u)
-      elseif u % 1 == 0 then
-        handle:write("\n3 ", u)
       else
         handle:write("\n3 ", ("%.17g"):format(u))
       end
@@ -85,10 +83,7 @@ local function write(handle, u, dict, max, string_dictionary)
 end
 
 return function (handle, u, string_dictionary)
-  local dict = {
-    [true] = 1;
-    [false] = 2;
-  }
+  local dict = { [true] = 1, [false] = 2 }
   handle:write "1"
   write(handle, u, dict, 2, string_dictionary)
   handle:write "\n"

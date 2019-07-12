@@ -17,6 +17,8 @@
 
 local decode_v1 = require "dromozoa.serializer.decode_v1"
 
+local error = error
+
 return function (source)
   local version = source:byte(1)
   if version == 0x31 then
