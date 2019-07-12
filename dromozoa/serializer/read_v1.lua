@@ -47,8 +47,7 @@ local function read(handle, dict)
       if k == nil then
         break
       end
-      local v = read(handle, dict)
-      u[k] = v
+      u[k] = read(handle, dict)
     end
 
     return u
