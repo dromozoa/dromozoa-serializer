@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>dromozoa-serializer</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/katex.min.css">
 <style>
 .markdown-body {
   box-sizing: border-box;
@@ -41,20 +42,7 @@
 <h2>TODO</h2>
 
 <ul>
-  <li>新しい形式の策定
-    <ul>
-      <li>命令コードとオペランドを合併する</li>
-      <li>バイナリ形式</li>
-    </ul>
-  </li>
-  <li>メモリIO</li>
-  <li>Luaコード生成</li>
   <li>Cコードの実装</li>
-  <li>ベンチマーク対象データの変更
-    <ul>
-      <li>同一テーブルを複数回利用する</li>
-    </ul>
-  </li>
 </ul>
 
 <h2>ベンチマーク対象データ</h2>
@@ -65,95 +53,14 @@
   <li>正規表現から生成したDFA</li>
 </ul>
 
-<h2>コード</h2>
-
-<h3>Luaの値</h3>
-
-<table>
-  <tr>
-    <th>major</th>
-    <th>type</th>
-    <th>minor</th>
-    <th>name</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td><code>LUA_TNIL</code></td>
-    <td>N/A</td>
-    <td><code>nil</code></td>
-  </tr>
-  <tr>
-    <td rowspan="2">1</td>
-    <td rowspan="2"><code>LUA_TBOOLEAN</code></td>
-    <td>0</td>
-    <td><code>false</code></td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td><code>true</code></td>
-  </tr>
-  <tr>
-    <td rowspan="2">3</td>
-    <td rowspan="2"><code>LUA_TNUMBER</code></td>
-    <td>0</td>
-    <td><code>LUA_TNUMFLT</code> (double)</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td><code>LUA_TNUMINT</code> (int64_t)</td>
-  </tr>
-  <tr>
-    <td rowspan="2">4</td>
-    <td rowspan="2"><code>LUA_TSTRING</code></td>
-    <td>0</td>
-    <td><code>LUA_TSHRSTR</code></td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td><code>LUA_TLNGSTR</code></td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td><code>LUA_TTABLE</code></td>
-    <td>N/A</td>
-    <td><code>{}</code></td>
-  </tr>
-</table>
-
-<h4>Lua 5.4ヘッダ</h4>
-
-<pre class="prettyprint lang-c">
-/* Variant tags for numbers */
-#define LUA_TNUMFLT	(LUA_TNUMBER | (1 &lt;&lt; 4))  /* float numbers */
-#define LUA_TNUMINT	(LUA_TNUMBER | (2 &lt;&lt; 4))  /* integer numbers */
-</pre>
-
-<pre class="prettyprint lang-c">
-/* Variant tags for strings */
-#define LUA_TSHRSTR	(LUA_TSTRING | (1 &lt;&lt; 4))  /* short strings */
-#define LUA_TLNGSTR	(LUA_TSTRING | (2 &lt;&lt; 4))  /* long strings */
-</pre>
-
-<h4>Lua 5.3ヘッダ</h4>
-
-<pre class="prettyprint lang-c">
-/* Variant tags for numbers */
-#define LUA_TNUMFLT	(LUA_TNUMBER | (0 &lt;&lt; 4))  /* float numbers */
-#define LUA_TNUMINT	(LUA_TNUMBER | (1 &lt;&lt; 4))  /* integer numbers */
-</pre>
-
-<pre class="prettyprint lang-c">
-/* Variant tags for strings */
-#define LUA_TSHRSTR	(LUA_TSTRING | (0 &lt;&lt; 4))  /* short strings */
-#define LUA_TLNGSTR	(LUA_TSTRING | (1 &lt;&lt; 4))  /* long strings */
-</pre>
+<h2>v1形式</h2>
 
 <h3>命令セット</h3>
 
 <table>
   <tr>
     <th>code</th>
-    <th>name</th>
+    <th>desc</th>
   </tr>
   <tr>
     <td><code>1 ref</code></td>
@@ -206,29 +113,14 @@
   </tr>
 </table>
 
-<h2>RAMディスク</h2>
-
-<h3>macOS</h3>
-
-<pre>
-man hdiutil
-</pre>
-
-<pre>
-Creating a RAM-backed device and filesystem:
-
-      NUMSECTORS=128000       # a sector is 512 bytes
-      mydev=`hdiutil attach -nomount ram://$NUMSECTORS`
-      newfs_hfs $mydev
-      mkdir /tmp/mymount
-      mount -t hfs $mydev /tmp/mymount
-</pre>
-
-<p>
-簡易ベンチマークはRAMディスクを使っても速くならなかった。
-</p>
-
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  renderMathInElement(document.body);
+});
+</script>
 </body>
 </html>

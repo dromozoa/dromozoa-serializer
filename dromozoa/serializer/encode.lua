@@ -15,11 +15,4 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-return {
-  decode = require "dromozoa.serializer.decode";
-  encode = require "dromozoa.serializer.encode";
-  encode_v1 = require "dromozoa.serializer.encode_v1";
-  read = require "dromozoa.serializer.read";
-  write = require "dromozoa.serializer.write";
-  write_v1 = require "dromozoa.serializer.write_v1";
-}
+return require "dromozoa.serializer.encode_v1"
