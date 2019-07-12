@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
+local error = error
+
 local function read(handle, dict)
   local op, x = handle:read("*n", "*n")
   if op == 1 then
@@ -53,7 +55,7 @@ local function read(handle, dict)
   elseif op == 7 then
     return nil
   else
-    error(("unknown op %s"):format(op))
+    error("unknown op " .. op)
   end
 end
 
