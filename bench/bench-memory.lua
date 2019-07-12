@@ -15,15 +15,40 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local decode_v1 = require "dromozoa.serializer.decode_v1"
+local unix = require "dromozoa.unix"
+local serializer = require "dromozoa.serializer"
 
-local error = error
+local source_filename = ...
 
-return function (source)
-  local version = source:byte(1)
-  if version == 0x31 then
-    return decode_v1(source, 3)
-  else
-    error("unknown version " .. version)
-  end
-end
+local timer = unix.timer()
+
+timer:start()
+local source = assert(loadfile(source_filename))()
+timer:stop()
+print("loadfile", timer:elapsed())
+
+collectgarbage()
+collectgarbage()
+local gc1 = collectgarbage "count"
+
+timer:start()
+local encoded = serializer.encode(source, true)
+timer:stop()
+
+local gc2 = collectgarbage "count"
+
+print("encode", timer:elapsed(), gc2 - gc1)
+
+source = nil
+
+collectgarbage()
+collectgarbage()
+local gc1 = collectgarbage "count"
+
+timer:start()
+local decoded = serializer.decode(encoded)
+timer:stop()
+
+local gc2 = collectgarbage "count"
+
+print("decode", timer:elapsed(), gc2 - gc1)
