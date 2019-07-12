@@ -15,6 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
+local error = error
 local pairs = pairs
 local type = type
 local math_type = math.type
@@ -74,10 +75,10 @@ local function write(handle, u, dict, max, string_dictionary)
           end
         end
 
-        handle:write("7 0\n")
+        handle:write "7 0\n"
       end
     else
-      error(("unsupported type %s"):format(t))
+      error("unsupported type " .. t)
     end
   end
 

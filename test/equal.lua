@@ -35,18 +35,47 @@ local function equal(a, b, dict)
       else
         dict[a] = true
       end
-      for k, u in pairs(a) do
-        local v = b[k]
-        if v == nil or not equal(u, v, dict) then
-          return false
+
+      for j, u in pairs(a) do
+        if type(j) == "table" then
+          local found
+          for k, v in pairs(b) do
+            if equal(j, k, dict) and equal(u, v, dict) then
+              found = true
+              break
+            end
+          end
+          if not found then
+            return false
+          end
+        else
+          local v = b[j]
+          if v == nil or not equal(u, v, dict) then
+            return false
+          end
         end
       end
+
       for k, v in pairs(b) do
-        local u = a[k]
-        if u == nil then
-          return false
+        if type(k) == "table" then
+          local found
+          for j, u in pairs(a) do
+            if equal(j, k, dict) and equal(u, v, dict) then
+              found = true
+              break
+            end
+          end
+          if not found then
+            return false
+          end
+        else
+          local u = a[k]
+          if u == nil then
+            return false
+          end
         end
       end
+
       return true
     else
       return a == b

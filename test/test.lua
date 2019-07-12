@@ -64,6 +64,11 @@ local function test_case(write)
     baz = nil;
     qux = 42;
   }
+
+  test {
+    [{name="foo"}] = {42};
+    [{name="bar"}] = {69};
+  }
 end
 
 test_case(serializer.write)
