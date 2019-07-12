@@ -15,16 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local read_v1 = require "dromozoa.serializer.read_v1"
-local read_v2 = require "dromozoa.serializer.read_v2"
+local loadstring = loadstring or load
 
 return function (handle)
-  local version = handle:read "*n"
-  if version == 1 then
-    return read_v1(handle)
-  elseif version == 2 then
-    return read_v2(handle)
-  else
-    error(("unknown version %d"):format(version))
-  end
+  return assert(loadstring(handle:read "*a"))()
 end

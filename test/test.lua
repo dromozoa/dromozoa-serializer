@@ -18,11 +18,20 @@
 local serializer = require "dromozoa.serializer"
 local equal = require "test.equal"
 
+local verbose = os.getenv "VERBOSE" == "1"
+
 local function test_case(write)
   local function test(source)
     local handle = assert(io.open("test.dat", "wb"))
     write(handle, source)
     handle:close()
+
+    if verbose then
+      local handle = assert(io.open("test.dat", "rb"))
+      io.stdout:write(("="):rep(60), "\n")
+      io.stdout:write(handle:read "*a")
+      handle:close()
+    end
 
     local handle = assert(io.open("test.dat", "rb"))
     local result = serializer.read(handle)
@@ -71,5 +80,6 @@ local function test_case(write)
   }
 end
 
-test_case(serializer.write)
-test_case(function (handle, source) serializer.write(handle, source, true) end)
+-- test_case(serializer.write)
+-- test_case(function (handle, source) serializer.write(handle, source, true) end)
+test_case(serializer.write_v2)

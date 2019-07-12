@@ -29,6 +29,8 @@ elseif write_option == "write_v1_string_dictionary" then
   write = function (handle, source)
     return serializer.write_v1(handle, source, true)
   end
+elseif write_option == "write_v2" then
+  write = serializer.write_v2
 end
 
 timer:start()
