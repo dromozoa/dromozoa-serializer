@@ -20,7 +20,7 @@ local equal = require "test.equal"
 
 local verbose = os.getenv "VERBOSE" == "1"
 
-local function test_case(write)
+local function test_case(write, read)
   local function test(source)
     local handle = assert(io.open("test.dat", "wb"))
     write(handle, source)
@@ -34,7 +34,7 @@ local function test_case(write)
     end
 
     local handle = assert(io.open("test.dat", "rb"))
-    local result = serializer.read(handle)
+    local result = read(handle)
     handle:close()
 
     assert(equal(source, result))
@@ -80,7 +80,16 @@ local function test_case(write)
   }
 end
 
-test_case(serializer.write)
-test_case(function (handle, source) serializer.write(handle, source, true) end)
-test_case(function (handle, source) handle:write(serializer.encode(source)) end)
-test_case(function (handle, source) handle:write(serializer.encode(source, true)) end)
+test_case(serializer.write, serializer.read)
+
+test_case(function (handle, source)
+  serializer.write(handle, source, true)
+end, serializer.read)
+
+test_case(function (handle, source)
+  handle:write(serializer.encode(source))
+end, serializer.read)
+
+test_case(function (handle, source)
+  handle:write(serializer.encode(source, true))
+end, serializer.read)
