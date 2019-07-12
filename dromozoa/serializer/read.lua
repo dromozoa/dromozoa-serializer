@@ -15,52 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local function read(handle, dict)
-  local op, x = handle:read("*n", "*n")
-  if op == 1 then
-    return dict[x]
-  elseif op == 2 or op == 3 then
-    return x
-  elseif op == 4 then
-    local _, u = handle:read(1, x)
-    return u
-  elseif op == 5 then
-    local y = handle:read("*n", 1)
-    local u = handle:read(y)
-    dict[x] = u
-    return u
-  elseif op == 6 then
-    local y = handle:read("*n")
-    local u = {}
-    dict[x] = u
-
-    for i = 1, y do
-      u[i] = read(handle, dict)
-    end
-
-    while true do
-      local k = read(handle, dict)
-      if k == nil then
-        break
-      end
-      local v = read(handle, dict)
-      u[k] = v
-    end
-
-    return u
-  elseif op == 7 then
-    return nil
-  else
-    error(("unknown op %s"):format(op))
-  end
-end
+local read_v1 = require "dromozoa.serializer.read_v1"
 
 return function (handle)
   local version = handle:read "*n"
   if version == 1 then
-    local dict = { true, false }
-    return read(handle, dict)
+    return read_v1(handle)
   else
-    error(("unknown version %d"):format(version))
+    error("unknown version " .. version)
   end
 end
