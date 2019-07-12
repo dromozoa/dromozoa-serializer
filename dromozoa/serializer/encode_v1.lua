@@ -126,10 +126,7 @@ end
 
 return function (u, string_dictionary)
   local buffer = { "1" }
-  local dict = {
-    [true] = 1;
-    [false] = 2;
-  }
+  local dict = { [true] = 1, [false] = 2 }
   local n = encode(buffer, 1, u, dict, 2, string_dictionary)
   n = n + 1
   buffer[n] = "\n"

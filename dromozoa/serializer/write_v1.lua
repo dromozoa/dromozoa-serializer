@@ -83,10 +83,7 @@ local function write(handle, u, dict, max, string_dictionary)
 end
 
 return function (handle, u, string_dictionary)
-  local dict = {
-    [true] = 1;
-    [false] = 2;
-  }
+  local dict = { [true] = 1, [false] = 2 }
   handle:write "1"
   write(handle, u, dict, 2, string_dictionary)
   handle:write "\n"
