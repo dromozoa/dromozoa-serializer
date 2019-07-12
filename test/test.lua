@@ -28,7 +28,7 @@ local function test_case(write, read)
 
     if verbose then
       local handle = assert(io.open("test.dat", "rb"))
-      io.stdout:write(("="):rep(60), "\n")
+      io.stdout:write(("-"):rep(60), "\n")
       io.stdout:write(handle:read "*a")
       handle:close()
     end
@@ -80,16 +80,32 @@ local function test_case(write, read)
   }
 end
 
-test_case(serializer.write, serializer.read)
+local write_functions = {
+  serializer.write;
+  function (handle, source)
+    serializer.write(handle, source, true)
+  end;
+  function (handle, source)
+    handle:write(serializer.encode(source))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode(source, true))
+  end;
+}
 
-test_case(function (handle, source)
-  serializer.write(handle, source, true)
-end, serializer.read)
+local read_functions = {
+  serializer.read;
+  function (handle)
+    return serializer.decode(handle:read "*a")
+  end;
+}
 
-test_case(function (handle, source)
-  handle:write(serializer.encode(source))
-end, serializer.read)
-
-test_case(function (handle, source)
-  handle:write(serializer.encode(source, true))
-end, serializer.read)
+for i = 1, #write_functions do
+  for j = 1, #read_functions do
+    if verbose then
+      io.stdout:write(("="):rep(60), "\n")
+      io.stdout:write("TEST(", i, ",", j, ")\n")
+    end
+    test_case(write_functions[i], read_functions[j])
+  end
+end

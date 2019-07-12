@@ -18,7 +18,7 @@
 local unix = require "dromozoa.unix"
 local serializer = require "dromozoa.serializer"
 
-local source_filename, result_filename, write_option, buffer_size = ...
+local source_filename, result_filename, write_option, read_option, buffer_size = ...
 
 local timer = unix.timer()
 
@@ -36,6 +36,13 @@ elseif write_option == "encode_v1" then
 elseif write_option == "encode_v1_string_dictionary" then
   write = function (handle, source)
     handle:write(serializer.encode_v1(source, true))
+  end
+end
+
+local read = serializer.read
+if read_option == "decode" then
+  read = function (handle)
+    return serializer.decode(handle:read "*a")
   end
 end
 
@@ -57,7 +64,7 @@ print("write", timer:elapsed())
 
 local handle = io.open(result_filename, "rb")
 timer:start()
-local result = serializer.read(handle)
+local result = read(handle)
 timer:stop()
 handle:close()
 print("read", timer:elapsed())

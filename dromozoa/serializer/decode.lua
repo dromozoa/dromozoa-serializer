@@ -15,11 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-return {
-  decode = require "dromozoa.serializer.decode";
-  encode = require "dromozoa.serializer.encode";
-  encode_v1 = require "dromozoa.serializer.encode_v1";
-  read = require "dromozoa.serializer.read";
-  write = require "dromozoa.serializer.write";
-  write_v1 = require "dromozoa.serializer.write_v1";
-}
+local decode_v1 = require "dromozoa.serializer.decode_v1"
+
+return function (source)
+  local version = source:byte(1)
+  if version == 0x31 then
+    return decode_v1(source, 3)
+  else
+    error("unknown version " .. version)
+  end
+end

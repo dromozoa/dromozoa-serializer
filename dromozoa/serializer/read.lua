@@ -22,6 +22,6 @@ return function (handle)
   if version == 1 then
     return read_v1(handle)
   else
-    error(("unknown version %d"):format(version))
+    error("unknown version " .. version)
   end
 end
