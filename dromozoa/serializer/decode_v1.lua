@@ -23,22 +23,18 @@ local function decode(source, p, dict)
   p = p + 2
   if op == 0x31 then
     local q = source:find("\n", p, true)
-    local u = dict[tonumber(source:sub(p, q))]
-    return u, q + 1
+    return dict[tonumber(source:sub(p, q))], q + 1
   elseif op == 0x32 then
     local q = source:find("\n", p, true)
-    local u = tonumber(source:sub(p, q))
-    return u, q + 1
+    return tonumber(source:sub(p, q)), q + 1
   elseif op == 0x33 then
     local q = source:find("\n", p, true)
-    local u = tonumber(source:sub(p, q))
-    return u + 0.0, q + 1
+    return tonumber(source:sub(p, q)) + 0.0, q + 1
   elseif op == 0x34 then
     local q = source:find(":", p, true)
     local size = tonumber(source:sub(p, q - 1))
     p = q + size
-    local u = source:sub(q + 1, p)
-    return u, p + 2
+    return source:sub(q + 1, p), p + 2
   elseif op == 0x35 then
     local q = source:find(" ", p, true)
     local ref = tonumber(source:sub(p, q))
