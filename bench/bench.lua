@@ -29,6 +29,14 @@ elseif write_option == "write_v1_string_dictionary" then
   write = function (handle, source)
     return serializer.write_v1(handle, source, true)
   end
+elseif write_option == "encode_v1" then
+  write = function (handle, source)
+    handle:write(serializer.encode_v1(source))
+  end
+elseif write_option == "encode_v1_string_dictionary" then
+  write = function (handle, source)
+    handle:write(serializer.encode_v1(source, true))
+  end
 end
 
 timer:start()

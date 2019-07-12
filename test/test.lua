@@ -82,3 +82,5 @@ end
 
 test_case(serializer.write)
 test_case(function (handle, source) serializer.write(handle, source, true) end)
+test_case(function (handle, source) handle:write(serializer.encode(source)) end)
+test_case(function (handle, source) handle:write(serializer.encode(source, true)) end)
