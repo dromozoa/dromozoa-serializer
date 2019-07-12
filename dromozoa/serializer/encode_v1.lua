@@ -138,5 +138,5 @@ return function (u, string_dictionary)
   local n = encode(buffer, 1, u, dict, 2, string_dictionary)
   n = n + 1
   buffer[n] = "\n"
-  return table_concat(buffer)
+  return table_concat(buffer, "", 1, n)
 end
