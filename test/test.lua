@@ -80,6 +80,5 @@ local function test_case(write)
   }
 end
 
--- test_case(serializer.write)
--- test_case(function (handle, source) serializer.write(handle, source, true) end)
-test_case(serializer.write_v2)
+test_case(serializer.write)
+test_case(function (handle, source) serializer.write(handle, source, true) end)
