@@ -22,44 +22,44 @@ local math_type = math.type
 
 local function write(handle, u, dict, max, string_dictionary)
   if u == nil then
-    handle:write "1 0\n"
+    handle:write "\n1 0"
   else
     local t = type(u)
     if t == "boolean" then
       if u then
-        handle:write "1 1\n"
+        handle:write "\n1 1"
       else
-        handle:write "1 2\n"
+        handle:write "\n1 2"
       end
     elseif t == "number" then
       if math_type and math_type(u) == "integer" then
-        handle:write("2 ", u, "\n")
+        handle:write("\n2 ", u)
       elseif u % 1 == 0 then
-        handle:write("3 ", u, "\n")
+        handle:write("\n3 ", u)
       else
-        handle:write("3 ", ("%.17g"):format(u), "\n")
+        handle:write("\n3 ", ("%.17g"):format(u))
       end
     elseif t == "string" then
       if string_dictionary then
         local ref = dict[u]
         if ref then
-          handle:write("1 ", ref, "\n")
+          handle:write("\n1 ", ref)
         else
           max = max + 1
-          handle:write("5 ", max, " ", #u, ":", u, "\n")
+          handle:write("\n5 ", max, " ", #u, ":", u)
           dict[u] = max
         end
       else
-        handle:write("4 ", #u, ":", u, "\n")
+        handle:write("\n4 ", #u, ":", u)
       end
     elseif t == "table" then
       local ref = dict[u]
       if ref then
-        handle:write("1 ", ref, "\n")
+        handle:write("\n1 ", ref)
       else
         max = max + 1
         local n = #u
-        handle:write("6 ", max, " ", n, "\n")
+        handle:write("\n6 ", max, " ", n)
         dict[u] = max
 
         local written = {}
@@ -67,7 +67,6 @@ local function write(handle, u, dict, max, string_dictionary)
           max = write(handle, u[i], dict, max, string_dictionary)
           written[i] = true
         end
-
         for k, v in pairs(u) do
           if not written[k] then
             max = write(handle, k, dict, max, string_dictionary)
@@ -75,7 +74,7 @@ local function write(handle, u, dict, max, string_dictionary)
           end
         end
 
-        handle:write "7 0\n"
+        handle:write "\n7 0"
       end
     else
       error("unsupported type " .. t)
@@ -90,6 +89,7 @@ return function (handle, u, string_dictionary)
     [true] = 1;
     [false] = 2;
   }
-  handle:write "1\n"
+  handle:write "1"
   write(handle, u, dict, 2, string_dictionary)
+  handle:write "\n"
 end

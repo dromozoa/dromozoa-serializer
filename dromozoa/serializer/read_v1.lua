@@ -29,16 +29,16 @@ local function read(handle, dict)
     local _, u = handle:read(1, x)
     return u
   elseif op == 5 then
-    local n = handle:read("*n", 1)
-    local u = handle:read(n)
+    local y = handle:read("*n", 1)
+    local u = handle:read(y)
     dict[x] = u
     return u
   elseif op == 6 then
-    local n = handle:read("*n")
+    local y = handle:read("*n")
     local u = {}
     dict[x] = u
 
-    for i = 1, n do
+    for i = 1, y do
       u[i] = read(handle, dict)
     end
 
