@@ -41,11 +41,6 @@ local function encode(buffer, n, u, dict, max, string_dictionary)
         buffer[n] = "\n2 "
         n = n + 1
         buffer[n] = u
-      elseif u % 1 == 0 then
-        n = n + 1
-        buffer[n] = "\n3 "
-        n = n + 1
-        buffer[n] = u
       else
         n = n + 1
         buffer[n] = "\n3 "
