@@ -119,43 +119,17 @@
 
 <pre>
 opi
-  lookup
-  string
-  table
+(  0) 0x0000 .. 0x3FFF lookup
+( 64) 0x4000 .. 0x7FFF string
+(128) 0x8000 .. 0xBFFF table
+(192) 0xC000           table
 
 op
-  lookup
-  string
-  table
-  end
-  integer
-  number
-
-lookupとtableはあらかじめエンコードしておける
-
-  0 0x0000 .. 0x3FFF  lookup
- 64 0x4000 .. 0x7FFF  string
-128 0x8000 .. 0xBFFF  table
-192 0xC000            table
-
-0xFF 0x01 lookup
-0xFF 0x02 string
-0xFF 0x03 integer
-0xFF 0x04 number
-0xFF 0x05 end
-</pre>
-
-<pre>
-u8
- 1 ref:u8                           lookup
- 2 size:u8 ref:string  " "          lookup
- 3 size:u8 data:string " "          integer
- 4 size:u8 data:string " "          number
- 5 size:u8 data:string              string (instant)
- 6 size:u8 size:string data:string  string (instant)
- 7 ref:u8                           table
- 8 size:u8 ref:string " "           table
- 9 0                                end
+0xFF01 lookup
+0xFF02 string
+0xFF03 integer
+0xFF04 number
+0xFF05 end
 </pre>
 
 </div>

@@ -45,14 +45,24 @@ local function read(handle, dict)
     local a = decoder1[a]
     local b = decoder1[b]
     if a < 64 then
-      local ref = a * 256 + b
-      return dict[ref]
+      if a == 0 then
+        return dict[b]
+      else
+        local ref = a * 256 + b
+        return dict[ref]
+      end
     elseif a < 128 then
-      local size = (a - 64) * 256 + b
-      return handle:read(size)
+      if a == 64 then
+        return handle:read(b)
+      else
+        local size = (a - 64) * 256 + b
+        return handle:read(size)
+      end
     else
       local ref
-      if a < 192 then
+      if a == 128 then
+        ref = b
+      elseif a < 192 then
         ref = (a - 128) * 256 + b
       elseif a == 192 and b == 0 then
         ref = handle:read("*n", 1)
