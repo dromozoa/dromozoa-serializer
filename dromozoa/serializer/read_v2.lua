@@ -33,10 +33,16 @@ local function read(handle, dict, max)
       local size = handle:read("*n", 1)
       return handle:read(size), max
     elseif b == "\3" then
-      return handle:read("*n", 1), max
+      local size = handle:read("*n", 1)
+      local u = handle:read(size)
+      max = max + 1
+      dict[max] = u
+      return u, max
     elseif b == "\4" then
-      return handle:read("*n", 1) + 0.0, max
+      return handle:read("*n", 1), max
     elseif b == "\5" then
+      return handle:read("*n", 1) + 0.0, max
+    elseif b == "\6" then
       local u = {}
       max = max + 1
       dict[max] = u
@@ -60,7 +66,7 @@ local function read(handle, dict, max)
       end
 
       return u, max
-    elseif b == "\6" then
+    elseif b == "\7" then
       return nil, max, true
     else
       error(("unknown op 0x%04x"):format(decoder1[a] * 256 + decoder1[b]))
@@ -82,6 +88,19 @@ local function read(handle, dict, max)
         local size = (a - 64) * 256 + b
         return handle:read(size), max
       end
+    elseif a < 192 then
+      if a == 128 then
+        local u = handle:read(b)
+        max = max + 1
+        dict[max] = u
+        return u, max
+      else
+        local size = (a - 128) * 256 + b
+        local u = handle:read(size)
+        max = max + 1
+        dict[max] = u
+        return u, max
+      end
     else
       error(("unknown op 0x%04x"):format(decoder1[a] * 256 + decoder1[b]))
     end
@@ -90,5 +109,5 @@ end
 
 return function (handle)
   local dict = { true, false }
-  return read(handle, dict, 2)
+  return (read(handle, dict, 2))
 end

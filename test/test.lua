@@ -114,9 +114,9 @@ local write_functions = {
     handle:write(serializer.encode(source, true))
   end;
   serializer.write_v2;
-  -- function (handle, source)
-  --   serializer.write_v2(handle, source, true)
-  -- end;
+  function (handle, source)
+    serializer.write_v2(handle, source, true)
+  end;
 }
 
 local read_functions = {

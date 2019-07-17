@@ -60,5 +60,5 @@ end
 
 return function (handle)
   local dict = { true, false }
-  return read(handle, dict)
+  return (read(handle, dict))
 end
