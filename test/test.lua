@@ -52,10 +52,19 @@ local function test_case(write, read)
   test(42.0)
   test("foo")
 
+  -- number
   test(1.7976931348623157e+308) -- DBL_MAX
   test(4.9406564584124654e-324) -- DBL_DENORM_MIN
   test(2.2250738585072014e-308) -- DBL_MIN
-  test(2.2204460492503131e-16) -- DBL_EPSILON
+  test(2.2204460492503131e-16)  -- DBL_EPSILON
+
+  -- number (minus)
+  test(-1.7976931348623157e+308) -- DBL_MAX
+  test(-4.9406564584124654e-324) -- DBL_DENORM_MIN
+  test(-2.2250738585072014e-308) -- DBL_MIN
+  test(-2.2204460492503131e-16)  -- DBL_EPSILON
+
+  -- integer
   test(0x7FFFFFFFFFFFFFFF)
   test(0xFFFFFFFFFFFFFFFF)
   test(-1)

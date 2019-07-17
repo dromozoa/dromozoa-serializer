@@ -17,83 +17,84 @@
 
 local error = error
 local pairs = pairs
-local tostring = tostring
 local type = type
 local math_type = math.type
 local string_char = string.char
-local string_pack = string.pack
 
 local encoder1 = {}
 for v = 0, 255 do
   encoder1[v] = string_char(v)
 end
 
-local function write(handle, u, dict, max, string_dictionary)
+local function write(handle, u, dict, max)
   if u == nil then
-    handle:write "\1\0"
+    handle:write "\0\0"
   else
     local t = type(u)
     if t == "boolean" then
       if u then
-        handle:write "\1\1"
+        handle:write "\0\1"
       else
-        handle:write "\1\2"
+        handle:write "\0\2"
       end
     elseif t == "number" then
       if math_type and math_type(u) == "integer" then
-        local s = tostring(u)
-        handle:write("\3", encoder1[#s], s, " ")
+        handle:write("\255\3", ("%20d "):format(u))
       else
-        local s = ("%.17g"):format(u)
-        handle:write("\4", encoder1[#s], s, " ")
+        handle:write("\255\4", ("%24.17g "):format(u))
       end
     elseif t == "string" then
-      if string_dictionary then
-        error "???"
+      local size = #u
+      if size < 256 then
+        handle:write("\64", encoder1[size], u)
+      elseif size < 4096 then
+        local b = size % 256
+        local a = (size - b) / 256 + 64
+        handle:write(encoder1[a], encoder1[b], u)
       else
-        local size = #u
-        if size < 256 then
-          handle:write("\5", encoder1[size], u)
-        else
-          local s = tostring(size)
-          handle:write("\6", encoder1[#s], s, " ", u)
-        end
+        handle:write("\255\2", ("%20d "):format(size), u)
       end
     elseif t == "table" then
       local ref = dict[u]
       if ref then
         if ref < 256 then
-          handle:write("\1", encoder1[ref])
+          handle:write("\0", encoder1[ref])
+        elseif ref < 4096 then
+          local b = ref % 256
+          local a = (ref - b) / 256
+          handle:write(encoder1[a], encoder1[b])
         else
-          local s = tostring(ref)
-          handle:write("\2", encoder1[#s], s, " ")
+          handle:write("\255\1", ("%20d "):format(ref))
         end
       else
         max = max + 1
         if max < 256 then
-          handle:write("\7", encoder1[max])
+          handle:write("\128", encoder1[max])
+        elseif max < 4096 then
+          local b = max % 256
+          local a = (max - b) / 256 + 128
+          handle:write(encoder1[a], encoder1[b])
         else
-          local s = tostring(max)
-          handle:write("\8", encoder1[#s], s, " ")
+          handle:write("\192\0", ("%20d "):format(max))
         end
         dict[u] = max
 
         local written = {}
         for i = 1, #u do
-          max = write(handle, u[i], dict, max, string_dictionary)
+          max = write(handle, u[i], dict, max)
           written[i] = true
         end
 
-        handle:write "\9\0"
+        handle:write "\255\5"
 
         for k, v in pairs(u) do
           if not written[k] then
-            max = write(handle, k, dict, max, string_dictionary)
-            max = write(handle, v, dict, max, string_dictionary)
+            max = write(handle, k, dict, max)
+            max = write(handle, v, dict, max)
           end
         end
 
-        handle:write "\9\0"
+        handle:write "\255\5"
       end
     else
       error("unsupported type " .. t)
@@ -103,8 +104,8 @@ local function write(handle, u, dict, max, string_dictionary)
   return max
 end
 
-return function (handle, u, string_dictionary)
+return function (handle, u)
   local dict = { [true] = 1, [false] = 2 }
   handle:write "2\n"
-  write(handle, u, dict, 2, string_dictionary)
+  write(handle, u, dict, 2)
 end

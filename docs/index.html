@@ -118,6 +118,34 @@
 <h3>命令セット</h3>
 
 <pre>
+opi
+  lookup
+  string
+  table
+
+op
+  lookup
+  string
+  table
+  end
+  integer
+  number
+
+lookupとtableはあらかじめエンコードしておける
+
+  0 0x0000 .. 0x3FFF  lookup
+ 64 0x4000 .. 0x7FFF  string
+128 0x8000 .. 0xBFFF  table
+192 0xC000            table
+
+0xFF 0x01 lookup
+0xFF 0x02 string
+0xFF 0x03 integer
+0xFF 0x04 number
+0xFF 0x05 end
+</pre>
+
+<pre>
 u8
  1 ref:u8                           lookup
  2 size:u8 ref:string  " "          lookup
