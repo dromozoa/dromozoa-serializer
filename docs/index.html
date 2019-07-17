@@ -120,16 +120,16 @@
 <pre>
 opi
 (  0) 0x0000 .. 0x3FFF lookup
-( 64) 0x4000 .. 0x7FFF string
-(128) 0x8000 .. 0xBFFF table
-(192) 0xC000           table
+( 64) 0x4000 .. 0x7FFF string (instant)
+(128) 0x8000 .. 0xBFFF string (dictionary)
 
 op
 0xFF01 lookup
 0xFF02 string
 0xFF03 integer
 0xFF04 number
-0xFF05 end
+0xFF05 table
+0xFF06 end
 </pre>
 
 </div>

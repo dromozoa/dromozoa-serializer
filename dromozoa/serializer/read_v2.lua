@@ -23,21 +23,45 @@ for v = 0, 255 do
   decoder1[string_char(v)] = v
 end
 
-local function read(handle, dict)
+local function read(handle, dict, max)
   local a, b = handle:read(1, 1)
   if a == "\255" then
     if b == "\1" then
       local ref = handle:read("*n", 1)
-      return dict[ref]
+      return dict[ref], max
     elseif b == "\2" then
       local size = handle:read("*n", 1)
-      return handle:read(size)
+      return handle:read(size), max
     elseif b == "\3" then
-      return (handle:read("*n", 1))
+      return handle:read("*n", 1), max
     elseif b == "\4" then
-      return handle:read("*n", 1) + 0.0
+      return handle:read("*n", 1) + 0.0, max
     elseif b == "\5" then
-      return nil, true
+      local u = {}
+      max = max + 1
+      dict[max] = u
+
+      local v, ended
+
+      for i = 1, 4294967295 do
+        v, max, ended = read(handle, dict, max)
+        if ended then
+          break
+        end
+        u[i] = v
+      end
+
+      while true do
+        v, max, ended = read(handle, dict, max)
+        if ended then
+          break
+        end
+        u[v], max = read(handle, dict, max)
+      end
+
+      return u, max
+    elseif b == "\6" then
+      return nil, max, true
     else
       error(("unknown op 0x%04x"):format(decoder1[a] * 256 + decoder1[b]))
     end
@@ -46,55 +70,25 @@ local function read(handle, dict)
     local b = decoder1[b]
     if a < 64 then
       if a == 0 then
-        return dict[b]
+        return dict[b], max
       else
         local ref = a * 256 + b
-        return dict[ref]
+        return dict[ref], max
       end
     elseif a < 128 then
       if a == 64 then
-        return handle:read(b)
+        return handle:read(b), max
       else
         local size = (a - 64) * 256 + b
-        return handle:read(size)
+        return handle:read(size), max
       end
     else
-      local ref
-      if a == 128 then
-        ref = b
-      elseif a < 192 then
-        ref = (a - 128) * 256 + b
-      elseif a == 192 and b == 0 then
-        ref = handle:read("*n", 1)
-      else
-        error(("unknown op 0x%04x"):format(decoder1[a] * 256 + decoder1[b]))
-      end
-
-      local u = {}
-      dict[ref] = u
-
-      for i = 1, 4294967295 do
-        local v, ended = read(handle, dict)
-        if ended then
-          break
-        end
-        u[i] = v
-      end
-
-      while true do
-        local k, ended = read(handle, dict)
-        if ended then
-          break
-        end
-        u[k] = read(handle, dict)
-      end
-
-      return u
+      error(("unknown op 0x%04x"):format(decoder1[a] * 256 + decoder1[b]))
     end
   end
 end
 
 return function (handle)
   local dict = { true, false }
-  return read(handle, dict)
+  return read(handle, dict, 2)
 end

@@ -67,16 +67,9 @@ local function write(handle, u, dict, max)
           handle:write("\255\1", ("%20d "):format(ref))
         end
       else
+        handle:write "\255\5"
+
         max = max + 1
-        if max < 256 then
-          handle:write("\128", encoder1[max])
-        elseif max < 4096 then
-          local b = max % 256
-          local a = (max - b) / 256 + 128
-          handle:write(encoder1[a], encoder1[b])
-        else
-          handle:write("\192\0", ("%20d "):format(max))
-        end
         dict[u] = max
 
         local written = {}
@@ -85,7 +78,7 @@ local function write(handle, u, dict, max)
           written[i] = true
         end
 
-        handle:write "\255\5"
+        handle:write "\255\6"
 
         for k, v in pairs(u) do
           if not written[k] then
@@ -94,7 +87,7 @@ local function write(handle, u, dict, max)
           end
         end
 
-        handle:write "\255\5"
+        handle:write "\255\6"
       end
     else
       error("unsupported type " .. t)
