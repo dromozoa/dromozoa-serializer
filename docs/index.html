@@ -113,6 +113,23 @@
   </tr>
 </table>
 
+<h2>v2形式</h2>
+
+<h3>命令セット</h3>
+
+<pre>
+u8
+ 1 ref:u8                           lookup
+ 2 size:u8 ref:string  " "          lookup
+ 3 size:u8 data:string " "          integer
+ 4 size:u8 data:string " "          number
+ 5 size:u8 data:string              string (instant)
+ 6 size:u8 size:string data:string  string (instant)
+ 7 ref:u8                           table
+ 8 size:u8 ref:string " "           table
+ 9 0                                end
+</pre>
+
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/katex.min.js"></script>

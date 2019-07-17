@@ -37,6 +37,10 @@ local function test_case(write, read)
     local result = read(handle)
     handle:close()
 
+    if verbose then
+      io.stdout:write(("%s <> %s\n"):format(source, result))
+    end
+
     assert(equal(source, result))
   end
 
@@ -100,13 +104,17 @@ local write_functions = {
   function (handle, source)
     handle:write(serializer.encode(source, true))
   end;
+  serializer.write_v2;
+  -- function (handle, source)
+  --   serializer.write_v2(handle, source, true)
+  -- end;
 }
 
 local read_functions = {
   serializer.read;
-  function (handle)
-    return serializer.decode(handle:read "*a")
-  end;
+  -- function (handle)
+  --   return serializer.decode(handle:read "*a")
+  -- end;
 }
 
 for i = 1, #write_functions do

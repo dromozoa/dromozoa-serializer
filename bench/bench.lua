@@ -37,6 +37,12 @@ elseif write_option == "encode_v1_string_dictionary" then
   write = function (handle, source)
     handle:write(serializer.encode_v1(source, true))
   end
+elseif write_option == "write_v2" then
+  write = serializer.write_v2
+elseif write_option == "write_v2_string_dictionary" then
+  write = function (handle, source)
+    return serializer.write_v2(handle, source, true)
+  end
 end
 
 local read = serializer.read
