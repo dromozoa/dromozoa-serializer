@@ -21,10 +21,10 @@ local read_v2 = require "dromozoa.serializer.read_v2"
 local error = error
 
 return function (handle)
-  local version = handle:read(2)
-  if version == "1\n" then
+  local version = handle:read(1)
+  if version == "1" then
     return read_v1(handle)
-  elseif version == "2\n" then
+  elseif version == "2" then
     return read_v2(handle)
   else
     error("unknown version " .. version)
