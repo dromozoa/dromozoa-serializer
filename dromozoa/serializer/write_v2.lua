@@ -22,30 +22,30 @@ local math_type = math.type
 
 local function write(handle, u, dict, max, string_dictionary, mode)
   if u == nil then
-    handle:write "\n1 0"
+    handle:write "\0010"
   else
     local t = type(u)
     if t == "boolean" then
       if u then
-        handle:write "\n1 1"
+        handle:write "\0011"
       else
-        handle:write "\n1 2"
+        handle:write "\0012"
       end
     elseif t == "number" then
       if math_type and math_type(u) == "integer" then
-        handle:write("\n2 ", u)
+        handle:write("\2", u)
       else
-        handle:write("\n3 ", ("%.17g"):format(u))
+        handle:write(("\3%.17g"):format(u))
       end
     elseif t == "string" then
       if string_dictionary + mode < 2 then
-        handle:write("\n4 ", #u, ":", u)
+        handle:write("\4", #u, ":", u)
       else
         local ref = dict[u]
         if ref then
-          handle:write("\n1 ", ref)
+          handle:write("\1", ref)
         else
-          handle:write("\n5 ", #u, ":", u)
+          handle:write("\5", #u, ":", u)
           max = max + 1
           dict[u] = max
         end
@@ -53,10 +53,10 @@ local function write(handle, u, dict, max, string_dictionary, mode)
     elseif t == "table" then
       local ref = dict[u]
       if ref then
-        handle:write("\n1 ", ref)
+        handle:write("\1", ref)
       else
         local size = #u
-        handle:write("\n6 ", size)
+        handle:write("\6", size)
         max = max + 1
         dict[u] = max
 
@@ -73,7 +73,7 @@ local function write(handle, u, dict, max, string_dictionary, mode)
           end
         end
 
-        handle:write "\n7 0"
+        handle:write "\7"
       end
     else
       error("unsupported type " .. t)
@@ -88,7 +88,6 @@ return function (handle, u, string_dictionary)
     string_dictionary = 0
   end
   local dict = { [true] = 1, [false] = 2 }
-  handle:write "2"
+  handle:write "2\n"
   write(handle, u, dict, 2, string_dictionary, 0)
-  handle:write "\n"
 end

@@ -18,22 +18,22 @@
 local error = error
 
 local function read(handle, dict, max)
-  local op, x = handle:read("*n", "*n")
-  if op == 1 then
+  local op, x = handle:read(1, "*n")
+  if op == "\1" then
     return max, dict[x]
-  elseif op == 2 then
+  elseif op == "\2" then
     return max, x
-  elseif op == 3 then
+  elseif op == "\3" then
     return max, x + 0.0
-  elseif op == 4 then
+  elseif op == "\4" then
     local _, u = handle:read(1, x)
     return max, u
-  elseif op == 5 then
+  elseif op == "\5" then
     local _, u = handle:read(1, x)
     max = max + 1
     dict[max] = u
     return max, u
-  elseif op == 6 then
+  elseif op == "\6" then
     local u = {}
     max = max + 1
     dict[max] = u
@@ -52,7 +52,7 @@ local function read(handle, dict, max)
     end
 
     return max, u
-  elseif op == 7 then
+  elseif op == "\7" then
     return max, nil
   else
     error("unknown op " .. op)
