@@ -55,7 +55,7 @@ local function read(handle, dict, max)
   elseif op == "\7" then
     return max, nil
   else
-    error("unknown op " .. op)
+    error("unknown op " .. op:byte())
   end
 end
 
