@@ -125,8 +125,75 @@ local function write(handle, u, dict, max, string_dictionary)
   return max
 end
 
+local function write(handle, u, dict, max, string_dictionary, mode)
+  if u == nil then
+    handle:write "\n1 0"
+  else
+    local t = type(u)
+    if t == "boolean" then
+      if u then
+        handle:write "\n1 1"
+      else
+        handle:write "\n1 2"
+      end
+    elseif t == "number" then
+      if math_type and math_type(u) == "integer" then
+        handle:write("\n2 ", u)
+      else
+        handle:write("\n3 ", ("%.17g"):format(u))
+      end
+    elseif t == "string" then
+      if string_dictionary + mode < 2 then
+        handle:write("\n4 ", #u, ":", u)
+      else
+        local ref = dict[u]
+        if ref then
+          handle:write("\n1 ", ref)
+        else
+          handle:write("\n5 ", #u, ":", u)
+          max = max + 1
+          dict[u] = max
+        end
+      end
+    elseif t == "table" then
+      local ref = dict[u]
+      if ref then
+        handle:write("\n1 ", ref)
+      else
+        local size = #u
+        handle:write("\n6 ", size)
+        max = max + 1
+        dict[u] = max
+
+        local written = {}
+        for i = 1, size do
+          max = write(handle, u[i], dict, max, string_dictionary, 0)
+          written[i] = true
+        end
+
+        for k, v in pairs(u) do
+          if not written[k] then
+            max = write(handle, k, dict, max, string_dictionary, 1)
+            max = write(handle, v, dict, max, string_dictionary, 0)
+          end
+        end
+
+        handle:write "\n7 0"
+      end
+    else
+      error("unsupported type " .. t)
+    end
+  end
+
+  return max
+end
+
 return function (handle, u, string_dictionary)
+  if not string_dictionary then
+    string_dictionary = 0
+  end
   local dict = { [true] = 1, [false] = 2 }
-  handle:write "2\n"
-  write(handle, u, dict, 2, string_dictionary)
+  handle:write "2"
+  write(handle, u, dict, 2, string_dictionary, 0)
+  handle:write "\n"
 end

@@ -39,9 +39,13 @@ elseif write_option == "encode_v1_string_dictionary" then
   end
 elseif write_option == "write_v2" then
   write = serializer.write_v2
-elseif write_option == "write_v2_string_dictionary" then
+elseif write_option == "write_v2_string_dictionary_all" then
   write = function (handle, source)
-    return serializer.write_v2(handle, source, true)
+    return serializer.write_v2(handle, source, 2)
+  end
+elseif write_option == "write_v2_string_dictionary_key" then
+  write = function (handle, source)
+    return serializer.write_v2(handle, source, 1)
   end
 end
 

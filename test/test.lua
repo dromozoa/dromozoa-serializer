@@ -115,7 +115,10 @@ local write_functions = {
   end;
   serializer.write_v2;
   function (handle, source)
-    serializer.write_v2(handle, source, true)
+    serializer.write_v2(handle, source, 1)
+  end;
+  function (handle, source)
+    serializer.write_v2(handle, source, 2)
   end;
 }
 
