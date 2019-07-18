@@ -120,13 +120,22 @@ local write_functions = {
   function (handle, source)
     serializer.write_v2(handle, source, 2)
   end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source, 1))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source, 2))
+  end;
 }
 
 local read_functions = {
   serializer.read;
-  -- function (handle)
-  --   return serializer.decode(handle:read "*a")
-  -- end;
+  function (handle)
+    return serializer.decode(handle:read "*a")
+  end;
 }
 
 for i = 1, #write_functions do

@@ -19,33 +19,42 @@ local error = error
 local pairs = pairs
 local type = type
 local math_type = math.type
+local table_concat = table.concat
 
-local function write(handle, u, dict, max, string_dictionary, mode)
+local function encode(buffer, n, u, dict, max, string_dictionary, mode)
   if u == nil then
-    handle:write "\0010"
+    n = n + 1; buffer[n] = "\0010"
   else
     local t = type(u)
     if t == "boolean" then
       if u then
-        handle:write "\0011"
+        n = n + 1; buffer[n] = "\0011"
       else
-        handle:write "\0012"
+        n = n + 1; buffer[n] = "\0012"
       end
     elseif t == "number" then
       if math_type and math_type(u) == "integer" then
-        handle:write("\2", u)
+        n = n + 1; buffer[n] = "\2"
+        n = n + 1; buffer[n] = u
       else
-        handle:write(("\3%.17g"):format(u))
+        n = n + 1; buffer[n] = ("\3%.17g"):format(u)
       end
     elseif t == "string" then
       if string_dictionary + mode < 2 then
-        handle:write("\4", #u, ":", u)
+        n = n + 1; buffer[n] = "\4"
+        n = n + 1; buffer[n] = #u
+        n = n + 1; buffer[n] = ":"
+        n = n + 1; buffer[n] = u
       else
         local ref = dict[u]
         if ref then
-          handle:write("\1", ref)
+          n = n + 1; buffer[n] = "\1"
+          n = n + 1; buffer[n] = ref
         else
-          handle:write("\5", #u, ":", u)
+          n = n + 1; buffer[n] = "\5"
+          n = n + 1; buffer[n] = #u
+          n = n + 1; buffer[n] = ":"
+          n = n + 1; buffer[n] = u
           max = max + 1
           dict[u] = max
         end
@@ -53,42 +62,45 @@ local function write(handle, u, dict, max, string_dictionary, mode)
     elseif t == "table" then
       local ref = dict[u]
       if ref then
-        handle:write("\1", ref)
+        n = n + 1; buffer[n] = "\1"
+        n = n + 1; buffer[n] = ref
       else
         local size = #u
-        handle:write("\6", size)
+        n = n + 1; buffer[n] = "\6"
+        n = n + 1; buffer[n] = size
         max = max + 1
         dict[u] = max
 
         local written = {}
         for i = 1, size do
-          max = write(handle, u[i], dict, max, string_dictionary, 0)
+          n, max = encode(buffer, n, u[i], dict, max, string_dictionary, 0)
           written[i] = true
         end
 
         for k, v in pairs(u) do
           if not written[k] then
-            max = write(handle, k, dict, max, string_dictionary, 1)
-            max = write(handle, v, dict, max, string_dictionary, 0)
+            n, max = encode(buffer, n, k, dict, max, string_dictionary, 1)
+            n, max = encode(buffer, n, v, dict, max, string_dictionary, 0)
           end
         end
 
-        handle:write "\7"
+        n = n + 1; buffer[n] = "\7"
       end
     else
       error("unsupported type " .. t)
     end
   end
 
-  return max
+  return n, max
 end
 
-return function (handle, u, string_dictionary)
+return function (u, string_dictionary)
   if not string_dictionary then
     string_dictionary = 0
   end
+  local buffer = { "2\n" }
   local dict = { [true] = 1, [false] = 2 }
-  handle:write "2\n"
-  write(handle, u, dict, 2, string_dictionary, 0)
-  handle:write "\7"
+  local n = encode(buffer, 1, u, dict, 2, string_dictionary, 0)
+  n = n + 1; buffer[n] = "\7"
+  return table_concat(buffer, "", 1, n)
 end
