@@ -15,4 +15,4 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-return require "dromozoa.serializer.encode_v1"
+return require "dromozoa.serializer.encode_v2"
