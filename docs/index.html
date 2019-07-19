@@ -117,21 +117,61 @@
 
 <h3>命令セット</h3>
 
-<pre>
-opi
-(  0) 0x0000 .. 0x3FFF lookup
-( 64) 0x4000 .. 0x7FFF string (instant)
-(128) 0x8000 .. 0xBFFF string (dictionary)
+<table>
+  <tr>
+    <th>code</th>
+    <th>desc</th>
+  </tr>
+  <tr>
+    <td><code>\x01</code> <code>integer</code></td>
+    <td>Lookup</td>
+  </tr>
+  <tr>
+    <td><code>\x02</code> <code>integer</code></td>
+    <td>Integer</td>
+  </tr>
+  <tr>
+    <td><code>\x03</code> <code>number</code></td>
+    <td>Number</td>
+  </tr>
+  <tr>
+    <td><code>\x04</code> <code>integer</code> <code>:</code> <code>bytes</code></td>
+    <td>String (instant)</td>
+  </tr>
+  <tr>
+    <td><code>\x05</code> <code>integer</code> <code>:</code> <code>bytes</code></td>
+    <td>String (dictionary)</td>
+  </tr>
+  <tr>
+    <td><code>\x06</code> <code>integer</code></td>
+    <td>Table</td>
+  </tr>
+  <tr>
+    <td><code>\x07</code></td>
+    <td>End</td>
+  </tr>
+</table>
 
-op
-0xFF01 lookup
-0xFF02 string (instant)
-0xFF03 string (dictionary)
-0xFF04 integer
-0xFF05 number
-0xFF06 table
-0xFF07 end
-</pre>
+<h3>初期辞書</h3>
+
+<table>
+  <tr>
+    <th>code</th>
+    <th>value</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td><code>nil</code></td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>false</code></td>
+  </tr>
+</table>
 
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
