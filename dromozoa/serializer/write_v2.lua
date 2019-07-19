@@ -85,7 +85,7 @@ end
 
 return function (handle, u, string_dictionary)
   if not string_dictionary then
-    string_dictionary = 0
+    string_dictionary = 2
   end
   local dict = { [true] = 1, [false] = 2 }
   handle:write "2\n"
