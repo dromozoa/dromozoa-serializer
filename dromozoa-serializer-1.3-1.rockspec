@@ -1,9 +1,9 @@
 rockspec_format = "3.0"
 package = "dromozoa-serializer"
-version = "1.2-1"
+version = "1.3-1"
 source = {
-  url = "https://github.com/dromozoa/dromozoa-serializer/archive/v1.2.tar.gz";
-  file = "dromozoa-serializer-1.2.tar.gz";
+  url = "https://github.com/dromozoa/dromozoa-serializer/archive/v1.3.tar.gz";
+  file = "dromozoa-serializer-1.3.tar.gz";
 }
 description = {
   summary = "Lua serialization utility";
@@ -21,11 +21,15 @@ build = {
     ["dromozoa.serializer"] = "dromozoa/serializer.lua";
     ["dromozoa.serializer.decode"] = "dromozoa/serializer/decode.lua";
     ["dromozoa.serializer.decode_v1"] = "dromozoa/serializer/decode_v1.lua";
+    ["dromozoa.serializer.decode_v2"] = "dromozoa/serializer/decode_v2.lua";
     ["dromozoa.serializer.encode"] = "dromozoa/serializer/encode.lua";
     ["dromozoa.serializer.encode_v1"] = "dromozoa/serializer/encode_v1.lua";
+    ["dromozoa.serializer.encode_v2"] = "dromozoa/serializer/encode_v2.lua";
     ["dromozoa.serializer.read"] = "dromozoa/serializer/read.lua";
     ["dromozoa.serializer.read_v1"] = "dromozoa/serializer/read_v1.lua";
+    ["dromozoa.serializer.read_v2"] = "dromozoa/serializer/read_v2.lua";
     ["dromozoa.serializer.write"] = "dromozoa/serializer/write.lua";
     ["dromozoa.serializer.write_v1"] = "dromozoa/serializer/write_v1.lua";
+    ["dromozoa.serializer.write_v2"] = "dromozoa/serializer/write_v2.lua";
   };
 }

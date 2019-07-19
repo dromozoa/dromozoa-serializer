@@ -113,6 +113,66 @@
   </tr>
 </table>
 
+<h2>v2形式</h2>
+
+<h3>命令セット</h3>
+
+<table>
+  <tr>
+    <th>code</th>
+    <th>desc</th>
+  </tr>
+  <tr>
+    <td><code>\x01</code> <code>integer</code></td>
+    <td>Lookup</td>
+  </tr>
+  <tr>
+    <td><code>\x02</code> <code>integer</code></td>
+    <td>Integer</td>
+  </tr>
+  <tr>
+    <td><code>\x03</code> <code>number</code></td>
+    <td>Number</td>
+  </tr>
+  <tr>
+    <td><code>\x04</code> <code>integer</code> <code>:</code> <code>bytes</code></td>
+    <td>String (instant)</td>
+  </tr>
+  <tr>
+    <td><code>\x05</code> <code>integer</code> <code>:</code> <code>bytes</code></td>
+    <td>String (dictionary)</td>
+  </tr>
+  <tr>
+    <td><code>\x06</code> <code>integer</code></td>
+    <td>Table</td>
+  </tr>
+  <tr>
+    <td><code>\x07</code></td>
+    <td>End</td>
+  </tr>
+</table>
+
+<h3>初期辞書</h3>
+
+<table>
+  <tr>
+    <th>code</th>
+    <th>value</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td><code>nil</code></td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>false</code></td>
+  </tr>
+</table>
+
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/katex.min.js"></script>

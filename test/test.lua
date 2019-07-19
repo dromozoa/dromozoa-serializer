@@ -37,6 +37,10 @@ local function test_case(write, read)
     local result = read(handle)
     handle:close()
 
+    if verbose then
+      io.stdout:write(("%s <> %s\n"):format(source, result))
+    end
+
     assert(equal(source, result))
   end
 
@@ -48,10 +52,19 @@ local function test_case(write, read)
   test(42.0)
   test("foo")
 
+  -- number
   test(1.7976931348623157e+308) -- DBL_MAX
   test(4.9406564584124654e-324) -- DBL_DENORM_MIN
   test(2.2250738585072014e-308) -- DBL_MIN
-  test(2.2204460492503131e-16) -- DBL_EPSILON
+  test(2.2204460492503131e-16)  -- DBL_EPSILON
+
+  -- number (minus)
+  test(-1.7976931348623157e+308) -- DBL_MAX
+  test(-4.9406564584124654e-324) -- DBL_DENORM_MIN
+  test(-2.2250738585072014e-308) -- DBL_MIN
+  test(-2.2204460492503131e-16)  -- DBL_EPSILON
+
+  -- integer
   test(0x7FFFFFFFFFFFFFFF)
   test(0xFFFFFFFFFFFFFFFF)
   test(-1)
@@ -87,18 +100,50 @@ local function test_case(write, read)
     [{name="foo"}] = {42};
     [{name="bar"}] = {69};
   }
+
+  local source = {}
+  for i = -64, 64 do
+    source[i] = i * i
+  end
+  test(source)
 end
 
 local write_functions = {
   serializer.write;
   function (handle, source)
-    serializer.write(handle, source, true)
-  end;
-  function (handle, source)
     handle:write(serializer.encode(source))
   end;
+  serializer.write_v1;
   function (handle, source)
-    handle:write(serializer.encode(source, true))
+    serializer.write_v1(handle, source, true)
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v1(source))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v1(source, true))
+  end;
+  serializer.write_v2;
+  function (handle, source)
+    serializer.write_v2(handle, source, 0)
+  end;
+  function (handle, source)
+    serializer.write_v2(handle, source, 1)
+  end;
+  function (handle, source)
+    serializer.write_v2(handle, source, 2)
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source, 0))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source, 1))
+  end;
+  function (handle, source)
+    handle:write(serializer.encode_v2(source, 2))
   end;
 }
 

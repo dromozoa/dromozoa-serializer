@@ -16,13 +16,16 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local decode_v1 = require "dromozoa.serializer.decode_v1"
+local decode_v2 = require "dromozoa.serializer.decode_v2"
 
 local error = error
 
 return function (source)
-  local version = source:byte(1)
-  if version == 0x31 then
+  local version = source:sub(1, 2)
+  if version == "1\n" then
     return decode_v1(source, 3)
+  elseif version == "2\n" then
+    return decode_v2(source, 3)
   else
     error("unknown version " .. version)
   end

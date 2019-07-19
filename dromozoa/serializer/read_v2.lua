@@ -17,48 +17,50 @@
 
 local error = error
 
-local function read(handle, dict)
-  local op, x = handle:read("*n", "*n")
-  if op == 1 then
-    return dict[x]
-  elseif op == 2 then
-    return x
-  elseif op == 3 then
-    return x + 0.0
-  elseif op == 4 then
+local function read(handle, dict, max)
+  local op, x = handle:read(1, "*n")
+  if op == "\1" then
+    return max, dict[x]
+  elseif op == "\2" then
+    return max, x
+  elseif op == "\3" then
+    return max, x + 0.0
+  elseif op == "\4" then
     local _, u = handle:read(1, x)
-    return u
-  elseif op == 5 then
-    local size = handle:read("*n", 1)
-    local u = handle:read(size)
-    dict[x] = u
-    return u
-  elseif op == 6 then
-    local size = handle:read("*n")
+    return max, u
+  elseif op == "\5" then
+    local _, u = handle:read(1, x)
+    max = max + 1
+    dict[max] = u
+    return max, u
+  elseif op == "\6" then
     local u = {}
-    dict[x] = u
+    max = max + 1
+    dict[max] = u
 
-    for i = 1, size do
-      u[i] = read(handle, dict)
+    for i = 1, x do
+      max, u[i] = read(handle, dict, max)
     end
 
+    local k
     while true do
-      local k = read(handle, dict)
+      max, k = read(handle, dict, max)
       if k == nil then
         break
       end
-      u[k] = read(handle, dict)
+      max, u[k] = read(handle, dict, max)
     end
 
-    return u
-  elseif op == 7 then
-    return nil
+    return max, u
+  elseif op == "\7" then
+    return max, nil
   else
-    error("unknown op " .. op)
+    error("unknown op " .. op:byte())
   end
 end
 
 return function (handle)
   local dict = { true, false }
-  return (read(handle, dict))
+  local _, u = read(handle, dict, 2)
+  return u
 end
