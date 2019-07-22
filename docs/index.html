@@ -37,7 +37,12 @@
   </li>
   <li><a href="https://www.unicode.org/Public/UCD/latest/ucd/">UCD</a></li>
   <li><a href="https://www.post.japanpost.jp/zipcode/download.html">郵便番号データダウンロード</a></li>
-  <li><a href="https://www.boost.org/doc/libs/release/libs/graph/doc/isomorphism.html">BGL isomorphism</a></li>
+</ul>
+
+<h2>ドキュメント</h2>
+
+<ul>
+  <li><a href="isomorphism.html">グラフ同型</a></li>
 </ul>
 
 <h2>TODO</h2>
@@ -173,60 +178,6 @@
     <td><code>false</code></td>
   </tr>
 </table>
-
-<h2>テーブル比較</h2>
-
-<p>テーブルが以下の条件を満たすとき、再帰を用いて容易にテーブルを比較できる。</p>
-
-<ol>
-  <li>テーブル参照をキーに持たない。</li>
-  <li>テーブル参照が循環していない。</li>
-</ol>
-
-<p>
-テーブル参照をキーに持つとき、等価な複数のテーブル参照がキーに含まれているかもしれない。つまり、
-</p>
-
-<pre class="prettyprint lang-lua">
-local x = {
-  [{42}] = 17;
-  [{42}] = 23;
-}
-</pre>
-
-<p>
-テーブル参照が循環しているとき、グラフが同型かどうかを判別する。次のテーブルは等価でない。
-</p>
-
-<pre class="prettyprint lang-lua">
-local y = {}
-local x = { foo = y }
-y.foo = x
-</pre>
-
-<pre class="prettyprint lang-lua">
-local z = {}
-local y = { foo = z }
-local x = { foo = y }
-z.foo = x
-</pre>
-
-<p>
-深さ優先探索でバックエッジが存在するかどうかを調べることで、テーブル参照の循環を検出する。
-</p>
-
-<p>
-下記のふたつを等価とみなすかどうかを検討する必要がある。単純な再帰による比較では等価と見なされるが、グラフが同型でない。
-</p>
-
-<pre class="prettyprint lang-lua">
-local y = { 42 }
-local x = { y, y }
-</pre>
-
-<pre class="prettyprint lang-lua">
-local x = { { 42 }, { 42 } }
-</pre>
 
 </div>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
