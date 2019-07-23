@@ -30,12 +30,34 @@
 
 <ul>
   <li><a href="https://www.boost.org/doc/libs/release/libs/graph/doc/isomorphism.html">BGL isomorphism</a></li>
+  <li><a href="https://www.boost.org/doc/libs/release/libs/graph/doc/depth_first_search.html">BGL depth_first_search</a></li>
 </ul>
 
-<h2>グラフ同型</h2>
+<h2>テーブルの等価とグラフ同型</h2>
 
 <p>
 テーブルをグラフ構造としてとらえたとき、グラフ同型ならばふたつのテーブルは等価であるとみなす。
+それぞれのグラフについて、ただひとつの始点ノードがわかっているため、一般的な判定問題よりもやさしい（と思う）。
+</p>
+
+<p>
+テーブル参照をキーに持たない場合、キーは順序づけ可能なので問題は易しい。
+そのため、テーブル参照をキーに持つ場合を考える。
+</p>
+
+<p>
+まず、単純なはなしとして、
+
+
+
+</p>
+
+
+
+
+
+<p>
+深さ優先探索により、グラフをtree edgeで構成されるspanning treeとback edgeとcross or forward edgeに分解する。spanning treeが等価でなければグラフは等価でない。
 </p>
 
 <p>テーブルが以下の条件を満たすとき、再帰を用いて容易にテーブルを比較できる。</p>
