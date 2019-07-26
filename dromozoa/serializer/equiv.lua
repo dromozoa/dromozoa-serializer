@@ -16,6 +16,7 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local error = error
+local next = next
 local pairs = pairs
 local setmetatable = setmetatable
 local type = type
@@ -70,35 +71,45 @@ local function equiv(a, b, P)
       end
     end
 
-    if m == 0 and n == 0 then
-      return true
-    elseif m ~= n then
-      return false
-    end
+    if m == n then
+      if m == 0 then
+        return true
+      else
+        local Q = setmetatable({}, { __index = P })
+        local R = {}
 
-    local map = {}
-    for j, u in pairs(a) do
-      if type(j) == "table" then
-        local found
-        for k, v in pairs(b) do
-          if not map[k] and type(k) == "table" then
-            local Q = { __index = P }
-            local Q = setmetatable(Q, Q)
-            if equiv(u, v, Q) and equiv(j, k, Q) then
-              map[k] = true
-              found = true
-              P = Q
-              break
+        for j, u in pairs(a) do
+          if type(j) == "table" then
+            local r
+            for k, v in pairs(b) do
+              if type(k) == "table" and not R[k] then
+                if equiv(u, v, Q) and equiv(j, k, Q) then
+                  for k, v in next, Q do
+                    P[k] = v
+                    Q[k] = nil
+                  end
+                  r = k
+                  break
+                else
+                  for k in next, Q do
+                    Q[k] = nil
+                  end
+                end
+              end
+            end
+            if r then
+              R[r] = true
+            else
+              return false
             end
           end
         end
-        if not found then
-          return false
-        end
-      end
-    end
 
-    return true
+        return true
+      end
+    else
+      return false
+    end
   else
     error("unsupported type " .. t)
   end
