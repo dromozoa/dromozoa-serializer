@@ -20,6 +20,7 @@ return {
   encode = require "dromozoa.serializer.encode";
   encode_v1 = require "dromozoa.serializer.encode_v1";
   encode_v2 = require "dromozoa.serializer.encode_v2";
+  equiv = require "dromozoa.serializer.equiv";
   read = require "dromozoa.serializer.read";
   write = require "dromozoa.serializer.write";
   write_v1 = require "dromozoa.serializer.write_v1";
