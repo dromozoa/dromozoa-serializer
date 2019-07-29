@@ -18,9 +18,45 @@
 local unix = require "dromozoa.unix"
 local serializer = require "dromozoa.serializer"
 
-local source_filename = ...
+local ubench = os.getenv "UBENCH" == "1"
+
+local source_filename, encode_option = ...
+
+if ubench then
+  assert(unix.sched_setaffinity(unix.getpid(), { 3 }))
+  assert(unix.sched_setscheduler(unix.getpid(), unix.SCHED_FIFO, {
+    sched_priority = unix.sched_get_priority_max(unix.SCHED_FIFO) - 1;
+  }))
+end
 
 local timer = unix.timer()
+
+local encode = serializer.encode
+if encode_option == "v1" then
+  encode = serializer.encode_v1
+elseif encode_option == "v1_all" then
+  encode = function (source)
+    return serializer.encode_v1(source, true)
+  end
+elseif encode_option == "v1_none" then
+  encode = function (source)
+    return serializer.encode_v1(source, false)
+  end
+elseif encode_option == "v2" then
+  encode = serializer.encode_v2
+elseif encode_option == "v2_all" then
+  encode = function (source)
+    return serializer.encode_v2(source, 2)
+  end
+elseif encode_option == "v2_key" then
+  encode = function (source)
+    return serializer.encode_v2(source, 1)
+  end
+elseif encode_option == "v2_none" then
+  encode = function (source)
+    return serializer.encode_v2(source, 0)
+  end
+end
 
 timer:start()
 local source = assert(loadfile(source_filename))()
@@ -31,9 +67,17 @@ collectgarbage()
 collectgarbage()
 local gc1 = collectgarbage "count"
 
+if ubench then
+  assert(unix.mlockall(unix.bor(unix.MCL_CURRENT, unix.MCL_FUTURE)))
+end
+
 timer:start()
-local encoded = serializer.encode(source, true)
+local encoded = encode(source)
 timer:stop()
+
+if ubench then
+  assert(unix.munlockall())
+end
 
 local gc2 = collectgarbage "count"
 
@@ -45,9 +89,17 @@ collectgarbage()
 collectgarbage()
 local gc1 = collectgarbage "count"
 
+if ubench then
+  assert(unix.mlockall(unix.bor(unix.MCL_CURRENT, unix.MCL_FUTURE)))
+end
+
 timer:start()
 local decoded = serializer.decode(encoded)
 timer:stop()
+
+if ubench then
+  assert(unix.munlockall())
+end
 
 local gc2 = collectgarbage "count"
 
