@@ -25,6 +25,7 @@ build = {
     ["dromozoa.serializer.encode"] = "dromozoa/serializer/encode.lua";
     ["dromozoa.serializer.encode_v1"] = "dromozoa/serializer/encode_v1.lua";
     ["dromozoa.serializer.encode_v2"] = "dromozoa/serializer/encode_v2.lua";
+    ["dromozoa.serializer.equal"] = "dromozoa/serializer/equal.lua";
     ["dromozoa.serializer.read"] = "dromozoa/serializer/read.lua";
     ["dromozoa.serializer.read_v1"] = "dromozoa/serializer/read_v1.lua";
     ["dromozoa.serializer.read_v2"] = "dromozoa/serializer/read_v2.lua";
