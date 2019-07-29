@@ -15,14 +15,29 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-return {
-  decode = require "dromozoa.serializer.decode";
-  encode = require "dromozoa.serializer.encode";
-  encode_v1 = require "dromozoa.serializer.encode_v1";
-  encode_v2 = require "dromozoa.serializer.encode_v2";
-  equal = require "dromozoa.serializer.equal";
-  read = require "dromozoa.serializer.read";
-  write = require "dromozoa.serializer.write";
-  write_v1 = require "dromozoa.serializer.write_v1";
-  write_v2 = require "dromozoa.serializer.write_v2";
-}
+local serializer = require "dromozoa.serializer"
+
+local math_type = math.type
+
+local verbose = os.getenv "VERBOSE" == "1"
+
+local t = {}
+local v = 42
+t[v] = v
+local v = 69.0
+t[v] = v
+local v = 1e100
+t[v] = v
+
+for k, v in pairs(t) do
+  if math_type then
+    if verbose then
+      print(math_type(k), math_type(v), k, v)
+    end
+  else
+    if verbose then
+      print(k, v)
+    end
+  end
+  assert(k == v)
+end

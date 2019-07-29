@@ -16,7 +16,6 @@
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
 local serializer = require "dromozoa.serializer"
-local equal = require "test.equal"
 
 local verbose = os.getenv "VERBOSE" == "1"
 
@@ -41,7 +40,7 @@ local function test_case(write, read)
       io.stdout:write(("%s <> %s\n"):format(source, result))
     end
 
-    assert(equal(source, result))
+    assert(serializer.equal(source, result))
   end
 
   test(nil)

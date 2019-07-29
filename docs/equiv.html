@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>dromozoa-serializer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/katex.min.css">
+<style>
+.markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+}
+@media (max-width: 767px) {
+  .markdown-body {
+    padding: 15px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="markdown-body">
+
+<h1>dromozoa-serializer</h1>
+
+<h2>リンク</h2>
+
+<ul>
+  <li><a href="https://www.boost.org/doc/libs/release/libs/graph/doc/isomorphism.html">BGL isomorphism</a></li>
+  <li><a href="https://www.boost.org/doc/libs/release/libs/graph/doc/depth_first_search.html">BGL depth_first_search</a></li>
+  <li><a href="https://www.boost.org/doc/libs/release/libs/graph/doc/vf2_sub_graph_iso.html">BGL vf2_subgraph_iso</a></li>
+  <li><a href="http://pallini.di.uniroma1.it/index.html">nauty and Traces</a></li>
+</ul>
+
+<h2>テーブルの等価</h2>
+
+<p>
+テーブル参照のキーが存在し、テーブル参照が循環する場合、等価性は容易に判定できない。
+そこで、テーブルを有向グラフととらえて、グラフ同型ならば等価であるとみなすことにする。
+</p>
+
+<p>
+この規則のもとでは、次のテーブル<code>a</code>と<code>b</code>は等価でない。
+</p>
+
+<pre class="prettyprint lang-lua">
+local a = { { 42 }, { 42 } }
+
+local t = { 42 }
+local b = { t, t }
+</pre>
+
+<p>
+なお、テーブル参照のキーが存在し、テーブル参照が循環する状況は一般的でない（弱参照を用いてキャッシュ機構を実装する場合が思いうかぶが、そのような場合に等価性を判定したいだろうか？）。
+そのため、ほとんどの場合、グラフサイズは非常に小さいと仮定できる。
+グラフ同型の判定のための良く知られたアルゴリズムが存在するが、非効率な実装であっても問題はないとする。
+</p>
+
+</div>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.2/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  renderMathInElement(document.body);
+});
+</script>
+</body>
+</html>
