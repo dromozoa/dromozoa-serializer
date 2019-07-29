@@ -23,7 +23,7 @@ local setmetatable = setmetatable
 local type = type
 local math_type = math.type
 
-local function equiv(a, b, P)
+local function equal(a, b, P)
   local t = type(a)
   if t ~= type(b) then
     return false
@@ -40,20 +40,20 @@ local function equiv(a, b, P)
       return true
     end
 
-    -- a \ne b
-
     local p = P[a]
-    if p then
-      return p == b
+    local q = P[b]
+    if p or q then
+      return rawequal(p, b) and rawequal(q, a)
     else
       P[a] = b
+      P[b] = a
     end
 
     local m = 0
     for k, u in pairs(a) do
       local t = type(k)
       if t == "number" or t == "string" or t == "boolean" then
-        if not equiv(u, b[k], P) then
+        if not equal(u, b[k], P) then
           return false
         end
       elseif t == "table" then
@@ -89,7 +89,7 @@ local function equiv(a, b, P)
             local r
             for k, v in pairs(b) do
               if type(k) == "table" and not R[k] then
-                if equiv(u, v, Q) and equiv(j, k, Q) then
+                if equal(u, v, Q) and equal(j, k, Q) then
                   for k, v in next, Q do
                     P[k] = v
                     Q[k] = nil
@@ -122,5 +122,5 @@ local function equiv(a, b, P)
 end
 
 return function (a, b)
-  return equiv(a, b, {})
+  return equal(a, b, {})
 end

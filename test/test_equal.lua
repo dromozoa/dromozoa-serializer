@@ -80,5 +80,5 @@ local x1 = { { 42 }, { 42 } }
 local y2 = { 42 }
 local y1 = { y2, y2 }
 
--- assert(not equal(x1, y1))
+assert(not equal(x1, y1))
 assert(not equal(y1, x1))
