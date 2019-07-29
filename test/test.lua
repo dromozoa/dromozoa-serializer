@@ -40,7 +40,7 @@ local function test_case(write, read)
       io.stdout:write(("%s <> %s\n"):format(source, result))
     end
 
-    assert(serializer.equiv(source, result))
+    assert(serializer.equal(source, result))
   end
 
   test(nil)

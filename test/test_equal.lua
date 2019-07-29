@@ -15,17 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local equiv = require "dromozoa.serializer.equiv"
+local equal = require "dromozoa.serializer.equal"
 
 local x = { a = { b = { [1.0] = 42 } } }
 local y = { a = { b = { [1] = 42 } } }
 
-assert(equiv(x, y))
+assert(equal(x, y))
 
 if math.type then
   local x = { a = { b = { [1.0] = 42 } } }
   local y = { a = { b = { [1] = 42.0 } } }
-  assert(not equiv(x, y))
+  assert(not equal(x, y))
 end
 
 local x1 = {}
@@ -36,7 +36,7 @@ local y1 = {}
 local y2 = { to = y1 }
 y1.to = y2
 
-assert(equiv(x1, y1))
+assert(equal(x1, y1))
 
 local x1 = { 17, 23, 42 }
 local x2 = { x1 }
@@ -46,7 +46,7 @@ local y1 = { 17, 23, 42 }
 local y2 = { y1 }
 y1[y2] = y2
 
-assert(equiv(x1, y1))
+assert(equal(x1, y1))
 
 local x1 = { 17, 23, 42 }
 local x2 = { x1 }
@@ -58,7 +58,7 @@ local y2 = { y1 }
 y1[{}] = y2
 y1[y2] = y2
 
-assert(equiv(x1, y1))
+assert(equal(x1, y1))
 
 local x1 = {
   [{}] = 17;
@@ -70,15 +70,15 @@ local y1 = {
   [{}] = 42;
 }
 
-assert(not equiv(x1, y1))
+assert(not equal(x1, y1))
 y1[{}] = 42
-assert(equiv(x1, y1))
+assert(equal(x1, y1))
 
-assert(not equiv({ 1, 2, 3 }, { 1, 2, 3, 4 }))
+assert(not equal({ 1, 2, 3 }, { 1, 2, 3, 4 }))
 
 local x1 = { { 42 }, { 42 } }
 local y2 = { 42 }
 local y1 = { y2, y2 }
 
--- assert(not equiv(x1, y1))
-assert(not equiv(y1, x1))
+-- assert(not equal(x1, y1))
+assert(not equal(y1, x1))
