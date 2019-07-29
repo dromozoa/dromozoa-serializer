@@ -15,7 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with dromozoa-serializer.  If not, see <http://www.gnu.org/licenses/>.
 
-local equal = require "dromozoa.serializer.equal"
+local serializer = require "dromozoa.serializer"
+
+local function equal(a, b)
+  local r1 = serializer.equal(a, b)
+  local r2 = serializer.equal(b, a)
+  assert(r1 == r2)
+  return r1
+end
 
 local x = { a = { b = { [1.0] = 42 } } }
 local y = { a = { b = { [1] = 42 } } }
@@ -81,4 +88,3 @@ local y2 = { 42 }
 local y1 = { y2, y2 }
 
 assert(not equal(x1, y1))
-assert(not equal(y1, x1))
