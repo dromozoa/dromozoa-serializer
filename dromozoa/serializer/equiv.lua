@@ -18,6 +18,7 @@
 local error = error
 local next = next
 local pairs = pairs
+local rawequal = rawequal
 local setmetatable = setmetatable
 local type = type
 local math_type = math.type
@@ -35,6 +36,12 @@ local function equiv(a, b, P)
       return a == b
     end
   elseif t == "table" then
+    if rawequal(a, b) then
+      return true
+    end
+
+    -- a \ne b
+
     local p = P[a]
     if p then
       return p == b
@@ -61,7 +68,6 @@ local function equiv(a, b, P)
       local t = type(k)
       if t == "number" or t == "string" or t == "boolean" then
         if a[k] == nil then
-          r[b] = false
           return false
         end
       elseif t == "table" then

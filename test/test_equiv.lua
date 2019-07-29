@@ -73,3 +73,12 @@ local y1 = {
 assert(not equiv(x1, y1))
 y1[{}] = 42
 assert(equiv(x1, y1))
+
+assert(not equiv({ 1, 2, 3 }, { 1, 2, 3, 4 }))
+
+local x1 = { { 42 }, { 42 } }
+local y2 = { 42 }
+local y1 = { y2, y2 }
+
+assert(not equiv(x1, y1))
+assert(not equiv(y1, x1))
