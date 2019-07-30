@@ -90,15 +90,15 @@ local function equal(a, b, P)
             for k, v in pairs(b) do
               if type(k) == "table" and not R[k] then
                 if equal(u, v, Q) and equal(j, k, Q) then
-                  for k, v in next, Q do
-                    P[k] = v
-                    Q[k] = nil
+                  for l, w in next, Q do
+                    P[l] = w
+                    Q[l] = nil
                   end
                   r = k
                   break
                 else
-                  for k in next, Q do
-                    Q[k] = nil
+                  for l in next, Q do
+                    Q[l] = nil
                   end
                 end
               end
