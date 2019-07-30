@@ -18,7 +18,16 @@
 local unix = require "dromozoa.unix"
 local serializer = require "dromozoa.serializer"
 
+local ubench = os.getenv "UBENCH" == "1"
+
 local source_filename, result_filename, write_option, read_option, buffer_size = ...
+
+if ubench then
+  assert(unix.sched_setaffinity(unix.getpid(), { 3 }))
+  assert(unix.sched_setscheduler(unix.getpid(), unix.SCHED_FIFO, {
+    sched_priority = unix.sched_get_priority_max(unix.SCHED_FIFO) - 1;
+  }))
+end
 
 local timer = unix.timer()
 
@@ -71,6 +80,11 @@ end
 timer:start()
 local source = assert(loadfile(source_filename))()
 timer:stop()
+
+if ubench then
+  assert(unix.munlockall())
+end
+
 print("loadfile", timer:elapsed())
 
 local handle = io.open(result_filename, "wb")
@@ -78,15 +92,34 @@ if buffer_size then
   handle:setvbuf("full", tonumber(buffer_size))
 end
 
+if ubench then
+  assert(unix.mlockall(unix.bor(unix.MCL_CURRENT, unix.MCL_FUTURE)))
+end
+
 timer:start()
 write(handle, source)
 timer:stop()
+
+if ubench then
+  assert(unix.munlockall())
+end
+
 handle:close()
 print("write", timer:elapsed())
 
 local handle = io.open(result_filename, "rb")
+
+if ubench then
+  assert(unix.mlockall(unix.bor(unix.MCL_CURRENT, unix.MCL_FUTURE)))
+end
+
 timer:start()
 local result = read(handle)
 timer:stop()
+
+if ubench then
+  assert(unix.munlockall())
+end
+
 handle:close()
 print("read", timer:elapsed())

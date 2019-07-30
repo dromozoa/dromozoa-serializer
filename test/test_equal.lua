@@ -29,10 +29,12 @@ local y = { a = { b = { [1] = 42 } } }
 
 assert(equal(x, y))
 
+local x = { a = { b = { [1.0] = 42 } } }
+local y = { a = { b = { [1] = 42.0 } } }
 if math.type then
-  local x = { a = { b = { [1.0] = 42 } } }
-  local y = { a = { b = { [1] = 42.0 } } }
   assert(not equal(x, y))
+else
+  assert(equal(x, y))
 end
 
 local x1 = {}
@@ -44,6 +46,15 @@ local y2 = { to = y1 }
 y1.to = y2
 
 assert(equal(x1, y1))
+assert(equal(x2, y1))
+
+x1.v = 17
+x2.v = 42
+y1.v = 17
+y2.v = 42
+
+assert(equal(x1, y1))
+assert(not equal(x2, y1))
 
 local x1 = { 17, 23, 42 }
 local x2 = { x1 }
